@@ -289,7 +289,12 @@
             document.getElementById(idPantalla).classList.add('activa');
             
             document.querySelectorAll('.menu-items button').forEach(b => b.classList.remove('activo'));
-            document.getElementById(`btn-${idPantalla.split('-')[1]}`).classList.add('activo');
+            
+            // LA SOLUCIÓN: Comprobamos si el botón existe antes de darle color
+            const botonMenu = document.getElementById(`btn-${idPantalla.split('-')[1]}`);
+            if (botonMenu) {
+                botonMenu.classList.add('activo');
+            }
 
             if(idPantalla === 'pantalla-colecciones') cargarSets();
             if(idPantalla === 'pantalla-boveda') cargarGaleriaMemoria(miVaultIds, 'grid-boveda', true);

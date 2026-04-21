@@ -3,86 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéTasador Cloud</title>
+    <title>PokéTasador PRO Cloud</title>
     <style>
-        /* VARIABLES CSS: Modo Claro / Oscuro */
-        :root {
-            --bg: #ffffff;
-            --surface: #f9fafb;
-            --border: #e5e7eb;
-            --text-main: #111827;
-            --text-muted: #6b7280;
-            --accent: #111827;
-            --accent-text: #ffffff;
-            --success: #10b981;
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        body.dark-mode {
-            --bg: #0f172a;
-            --surface: #1e293b;
-            --border: #334155;
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #ffffff;
-            --accent-text: #0f172a;
-        }
-
+        :root { --bg: #ffffff; --surface: #f9fafb; --border: #e5e7eb; --text-main: #111827; --text-muted: #6b7280; --accent: #111827; --accent-text: #ffffff; --success: #10b981; --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+        body.dark-mode { --bg: #0f172a; --surface: #1e293b; --border: #334155; --text-main: #f8fafc; --text-muted: #94a3b8; --accent: #ffffff; --accent-text: #0f172a; }
         * { box-sizing: border-box; }
-
         body { font-family: var(--font-family); background-color: var(--bg); color: var(--text-main); margin: 0; display: flex; height: 100vh; overflow: hidden; transition: 0.3s; }
 
-        /* 1. SIDEBAR MINIMALISTA */
-        nav.sidebar { width: 260px; background-color: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 30px 20px; transition: 0.3s; z-index: 10; }
-        .logo-area { font-size: 18px; font-weight: 700; margin-bottom: 30px; display: flex; align-items: center; justify-content: space-between; }
-        
-        /* Panel de Usuario Firebase */
-        .user-profile { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; transition: 0.3s;}
+        /* NAVEGACIÓN Y USUARIO */
+        nav.sidebar { width: 260px; background-color: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 30px 20px; z-index: 10; }
+        .logo-area { font-size: 18px; font-weight: 700; margin-bottom: 30px; display: flex; justify-content: space-between; }
+        .user-profile { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
         .user-profile p { margin: 0 0 10px 0; font-size: 13px; color: var(--text-muted); }
-        
         .menu-items { flex: 1; display: flex; flex-direction: column; gap: 8px; }
         .menu-items button { background: none; border: none; color: var(--text-muted); padding: 12px 15px; text-align: left; font-size: 15px; font-weight: 500; border-radius: 8px; cursor: pointer; transition: 0.2s; }
         .menu-items button:hover { background-color: var(--surface); color: var(--text-main); }
         .menu-items button.activo { background-color: var(--accent); color: var(--accent-text); }
         .btn-theme { margin-top: auto; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); padding: 10px; border-radius: 8px; font-weight: 600; }
 
-        /* 2. ZONA PRINCIPAL */
+        /* PRINCIPAL Y BOTONES */
         main { flex: 1; overflow-y: auto; padding: 50px 60px; }
-        .pantalla { display: none; max-width: 1200px; margin: auto; animation: fade 0.4s ease; }
-        .pantalla.activa { display: block; }
+        .pantalla { display: none; max-width: 1200px; margin: auto; animation: fade 0.4s ease; } .pantalla.activa { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
         h2 { font-size: 28px; font-weight: 700; margin-top: 0; margin-bottom: 30px; letter-spacing: -0.5px; }
-
-        /* Botones e Inputs */
-        input { width: 100%; max-width: 400px; padding: 14px 20px; font-size: 15px; background: var(--surface); border: 1px solid var(--border); color: var(--text-main); border-radius: 8px; outline: none; transition: 0.2s; }
-        input:focus { border-color: var(--accent); }
-        .btn { background: var(--accent); color: var(--accent-text); border: none; padding: 14px 24px; border-radius: 8px; font-size: 15px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        input, select { padding: 10px 15px; font-size: 14px; background: var(--surface); border: 1px solid var(--border); color: var(--text-main); border-radius: 8px; outline: none; transition: 0.2s; }
+        .btn { background: var(--accent); color: var(--accent-text); border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
 
-        /* Grillas y Cartas */
+        /* GRID SETS Y CARTAS */
         .grid-sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 25px; }
         .set-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 25px; cursor: pointer; transition: 0.3s; text-align: center; }
-        .set-card:hover { transform: translateY(-5px); border-color: var(--text-muted); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .set-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
         .set-card img { max-width: 80%; height: 80px; object-fit: contain; margin-bottom: 15px; }
         
-        .grid-galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; margin-top: 20px; }
-        .carta-wrapper img { width: 100%; border-radius: 10px; cursor: pointer; transition: 0.3s ease; border: 2px solid transparent; }
-        .carta-wrapper img:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        .grid-galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; margin-top: 20px; }
+        .carta-wrapper { position: relative; cursor: pointer; transition: 0.2s; border-radius: 10px; }
+        .carta-wrapper img { width: 100%; border-radius: 10px; display: block; border: 3px solid transparent; transition: 0.2s; }
+        .carta-wrapper:hover { transform: translateY(-5px); }
         .no-obtenida img { filter: grayscale(100%) opacity(0.4); }
 
-        /* The Vault Dashboard */
+        /* MODO LOTE Y ORDENACIÓN */
+        .action-toolbar { display: flex; gap: 15px; align-items: center; background: var(--surface); padding: 15px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 20px;}
+        .lote-actions { display: none; gap: 10px; border-left: 1px solid var(--border); padding-left: 15px; }
+        .carta-wrapper.seleccionada img { border-color: var(--success); filter: grayscale(0%) opacity(1); transform: scale(0.95); }
+        .marca-seleccion { display: none; position: absolute; top: 10px; right: 10px; background: var(--success); color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; z-index: 2;}
+        .carta-wrapper.seleccionada .marca-seleccion { display: block; }
+
+        /* DASHBOARD Y DRAWER */
         .dashboard-header { display: flex; gap: 20px; margin-bottom: 40px; }
         .metric-card { flex: 1; padding: 30px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
         .metric-card p { margin: 0 0 10px 0; color: var(--text-muted); font-size: 14px; text-transform: uppercase; }
         .metric-card h3 { margin: 0; font-size: 42px; font-weight: 300; }
-
-        /* 3. OVERLAY: SIDE DRAWER */
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000; }
-        .drawer { position: fixed; top: 0; right: -450px; width: 450px; height: 100vh; background: var(--bg); border-left: 1px solid var(--border); transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1001; display: flex; flex-direction: column; }
+        .drawer { position: fixed; top: 0; right: -450px; width: 450px; height: 100vh; background: var(--bg); border-left: 1px solid var(--border); transition: right 0.4s; z-index: 1001; display: flex; flex-direction: column; }
         .drawer-header { padding: 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
-        .drawer-header h3 { margin: 0; font-size: 24px; }
-        .drawer-close { background: none; border: none; font-size: 28px; color: var(--text-muted); cursor: pointer; }
         .drawer-content { flex: 1; overflow-y: auto; padding: 30px; }
         .drawer-content img { width: 220px; border-radius: 10px; display: block; margin: 0 auto 30px auto; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
         .info-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--surface); }
@@ -95,45 +70,32 @@
 <body>
 
     <nav class="sidebar">
-        <div class="logo-area">
-            <span>⚪ PokéTasador</span>
-        </div>
-        
+        <div class="logo-area"><span>⚪ PokéTasador</span></div>
         <div id="user-panel" class="user-profile">
             <p id="user-text">No has iniciado sesión</p>
             <button id="btn-login" class="btn" style="width: 100%; font-size: 13px;">Iniciar con Google</button>
             <button id="btn-logout" class="btn" style="width: 100%; background:#d32f2f; font-size: 13px; display:none;">Cerrar Sesión</button>
         </div>
-
         <div class="menu-items">
             <button id="btn-inicio" class="activo" onclick="cambiarPantalla('pantalla-inicio')">✦ Inicio</button>
             <button id="btn-boveda" onclick="cambiarPantalla('pantalla-boveda')">◒ The Vault</button>
             <button id="btn-colecciones" onclick="cambiarPantalla('pantalla-colecciones')">📚 Expansiones</button>
-            <button id="btn-mercado" onclick="cambiarPantalla('pantalla-mercado')">⚲ Buscar Cartas</button>
+            <button id="btn-mercado" onclick="cambiarPantalla('pantalla-mercado')">⚲ Mercado</button>
         </div>
         <button class="btn-theme" onclick="toggleTema()">◐ Cambiar Tema</button>
     </nav>
 
     <main>
         <div id="pantalla-inicio" class="pantalla activa">
-            <h2>Panel de Control Cloud</h2>
-            <div class="metric-card" style="margin-bottom: 20px;">
-                <p>Estado de Sincronización</p>
-                <h3 style="font-size: 20px; line-height: 1.5;">Inicia sesión con Google en el panel izquierdo para guardar tus cartas en la base de datos segura.</h3>
-            </div>
+            <h2>Panel de Control</h2>
+            <div class="metric-card"><p>Estado</p><h3>Sistema en la Nube Activo</h3></div>
         </div>
 
         <div id="pantalla-boveda" class="pantalla">
             <h2>The Vault</h2>
             <div class="dashboard-header">
-                <div class="metric-card">
-                    <p>Valor Total Estimado</p>
-                    <h3 id="valor-total-boveda" style="color: var(--success);">0.00 €</h3>
-                </div>
-                <div class="metric-card">
-                    <p>Cartas Aseguradas</p>
-                    <h3 id="contador-cartas">0</h3>
-                </div>
+                <div class="metric-card"><p>Valor Total Estimado</p><h3 id="valor-total-boveda" style="color: var(--success);">0.00 €</h3></div>
+                <div class="metric-card"><p>Cartas Aseguradas</p><h3 id="contador-cartas">0</h3></div>
             </div>
             <div id="grid-boveda" class="grid-galeria"></div>
         </div>
@@ -144,15 +106,38 @@
         </div>
 
         <div id="pantalla-detalle-set" class="pantalla">
-            <button class="btn btn-outline" style="margin-bottom: 20px; padding: 8px 16px; font-size:13px;" onclick="cambiarPantalla('pantalla-colecciones')">← Volver</button>
-            <h2 id="titulo-set-actual">Set</h2>
+            <button class="btn btn-outline" style="margin-bottom: 20px; padding: 6px 12px; font-size:12px;" onclick="cambiarPantalla('pantalla-colecciones')">← Volver</button>
+            <h2 id="titulo-set-actual" style="margin-bottom: 10px;">Set</h2>
+            
+            <div class="action-toolbar">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="font-size: 14px; font-weight: 600;">Ordenar por:</span>
+                    <select id="select-orden" onchange="ordenarSet()">
+                        <option value="numero">Nº de Catálogo</option>
+                        <option value="precioAlto">Precio: Más Alto primero</option>
+                        <option value="precioBajo">Precio: Más Bajo primero</option>
+                        <option value="nombre">Nombre (A-Z)</option>
+                    </select>
+                </div>
+
+                <div style="flex: 1;"></div> 
+
+                <button id="btn-toggle-lote" class="btn btn-outline" onclick="toggleModoLote()">Selección en Lote</button>
+                
+                <div id="acciones-lote" class="lote-actions">
+                    <span id="contador-lote" style="font-weight: 600; font-size: 14px;">0 sel.</span>
+                    <button id="btn-lote-add" class="btn" style="background: var(--success);" onclick="guardarLoteNube('add')">+ Añadir</button>
+                    <button id="btn-lote-remove" class="btn" style="background: #d32f2f;" onclick="guardarLoteNube('remove')">- Quitar</button>
+                </div>
+            </div>
+
             <div id="galeria-cartas" class="grid-galeria"></div>
         </div>
 
         <div id="pantalla-mercado" class="pantalla">
-            <h2>Búsqueda Global</h2>
+            <h2>Mercado Global</h2>
             <div style="display: flex; gap: 10px; margin-bottom: 30px;">
-                <input type="text" id="buscador-input" placeholder="Nombre de la carta (ej. Charizard)">
+                <input type="text" id="buscador-input" placeholder="Nombre (ej. Charizard)" style="width: 300px;">
                 <button class="btn" onclick="buscarMercado()">Buscar</button>
             </div>
             <div id="resultados-mercado" class="grid-galeria"></div>
@@ -162,17 +147,13 @@
     <div class="drawer-overlay" id="drawer-overlay" onclick="cerrarDrawer()"></div>
     <div class="drawer" id="side-drawer">
         <div class="drawer-header">
-            <div>
-                <h3 id="drawer-nombre">Cargando...</h3>
-                <span id="drawer-set" style="color: var(--text-muted); font-size: 14px;">Set</span>
-            </div>
+            <div><h3 id="drawer-nombre">Cargando...</h3><span id="drawer-set" style="color: var(--text-muted); font-size: 14px;">Set</span></div>
             <button class="drawer-close" onclick="cerrarDrawer()">×</button>
         </div>
         <div class="drawer-content">
-            <img id="drawer-img" src="" alt="Carta">
-            <div class="info-row"><span class="info-label">Cardmarket (Media)</span><span class="info-value" id="drawer-precio" style="color: var(--success); font-size: 18px;">0.00 €</span></div>
+            <img id="drawer-img" src="">
+            <div class="info-row"><span class="info-label">Cardmarket (Media)</span><span class="info-value" id="drawer-precio" style="color: var(--success);">0.00 €</span></div>
             <div class="info-row"><span class="info-label">Rareza</span><span class="info-value" id="drawer-rareza">-</span></div>
-            <div class="info-row"><span class="info-label">ID</span><span class="info-value" id="drawer-id">-</span></div>
         </div>
         <div class="drawer-footer">
             <button class="btn" id="btn-vault" onclick="toggleVault()">Añadir a Vault</button>
@@ -184,10 +165,6 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-        // PEGA AQUÍ ABAJO EL BLOQUE "const firebaseConfig = { ... };" DE GOOGLE
-        // 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-
         const firebaseConfig = {
             apiKey: "AIzaSyC6kKfcphTMzfY07eL1LSb2NLpCYOYxtW8",
             authDomain: "pokevault-f03aa.firebaseapp.com",
@@ -197,230 +174,230 @@
             appId: "1:120590919024:web:38135cf5073888b9971bb5"
         };
 
-        // 🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨🚨
-
-        // Inicializar Firebase
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        // Variables Globales
         window.miVaultIds = []; 
         let usuarioActual = null;
         window.cacheCartas = {};
         let cartaActiva = null;
 
-        // Tema Oscuro
+        window.cartasSetActual = [];
+        window.modoSeleccionLote = false;
+        window.cartasSeleccionadas = new Set();
+
         window.onload = () => { if(localStorage.getItem('tema') === 'dark') document.body.classList.add('dark-mode'); };
         window.toggleTema = () => { document.body.classList.toggle('dark-mode'); localStorage.setItem('tema', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); };
 
-        // ==========================================
-        // 1. SISTEMA DE USUARIOS
-        // ==========================================
         onAuthStateChanged(auth, async (user) => {
             const btnLogin = document.getElementById('btn-login');
             const btnLogout = document.getElementById('btn-logout');
             const userText = document.getElementById('user-text');
-
             if (user) {
                 usuarioActual = user;
                 userText.innerHTML = `Hola, <strong>${user.displayName}</strong>`;
-                btnLogin.style.display = 'none';
-                btnLogout.style.display = 'block';
+                btnLogin.style.display = 'none'; btnLogout.style.display = 'block';
                 await sincronizarBovedaDesdeNube();
             } else {
-                usuarioActual = null;
-                window.miVaultIds = []; 
+                usuarioActual = null; window.miVaultIds = []; 
                 userText.innerHTML = "No has iniciado sesión";
-                btnLogin.style.display = 'block';
-                btnLogout.style.display = 'none';
+                btnLogin.style.display = 'block'; btnLogout.style.display = 'none';
             }
         });
 
         document.getElementById('btn-login').addEventListener('click', () => signInWithPopup(auth, provider));
         document.getElementById('btn-logout').addEventListener('click', () => { signOut(auth); window.cambiarPantalla('pantalla-inicio'); });
 
-        // ==========================================
-        // 2. BASE DE DATOS FIRESTORE
-        // ==========================================
         async function sincronizarBovedaDesdeNube() {
             if (!usuarioActual) return;
-            const docRef = doc(db, "usuarios", usuarioActual.uid);
-            const docSnap = await getDoc(docRef);
-            
-            if (docSnap.exists()) {
-                window.miVaultIds = docSnap.data().cartasGuardadas || [];
-            } else {
-                await setDoc(docRef, { cartasGuardadas: [] });
-                window.miVaultIds = [];
-            }
+            const docSnap = await getDoc(doc(db, "usuarios", usuarioActual.uid));
+            if (docSnap.exists()) window.miVaultIds = docSnap.data().cartasGuardadas || [];
+            else { await setDoc(doc(db, "usuarios", usuarioActual.uid), { cartasGuardadas: [] }); window.miVaultIds = []; }
         }
 
         async function guardarEnNube() {
-            if (!usuarioActual) {
-                alert("Debes iniciar sesión con Google para guardar cartas en la nube.");
-                return false;
-            }
-            const docRef = doc(db, "usuarios", usuarioActual.uid);
-            await setDoc(docRef, { cartasGuardadas: window.miVaultIds }, { merge: true });
+            if (!usuarioActual) { alert("Inicia sesión primero."); return false; }
+            await setDoc(doc(db, "usuarios", usuarioActual.uid), { cartasGuardadas: window.miVaultIds }, { merge: true });
             return true;
         }
 
-        // ==========================================
-        // 3. INTERFAZ Y NAVEGACIÓN
-        // ==========================================
-        window.cambiarPantalla = (idPantalla) => {
+        window.cambiarPantalla = (id) => {
             document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-            document.getElementById(idPantalla).classList.add('activa');
+            document.getElementById(id).classList.add('activa');
             document.querySelectorAll('.menu-items button').forEach(b => b.classList.remove('activo'));
-            const btnMenu = document.getElementById(`btn-${idPantalla.split('-')[1]}`);
+            const btnMenu = document.getElementById(`btn-${id.split('-')[1]}`);
             if(btnMenu) btnMenu.classList.add('activo');
 
-            if(idPantalla === 'pantalla-colecciones') window.cargarSets();
-            if(idPantalla === 'pantalla-boveda') window.cargarBovedaUI();
+            if(id === 'pantalla-colecciones') window.cargarSets();
+            if(id === 'pantalla-boveda') window.cargarBovedaUI();
         };
 
         window.cargarSets = async () => {
             const div = document.getElementById('lista-sets');
             if (div.innerHTML.includes("set-card")) return;
             div.innerHTML = "<p>Cargando catálogo...</p>";
-            try {
-                const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=21');
-                const json = await res.json();
-                div.innerHTML = "";
-                json.data.forEach(s => {
-                    div.innerHTML += `<div class="set-card" onclick="abrirSet('${s.id}', '${s.name}')"><img src="${s.images.logo}"><br><strong>${s.name}</strong></div>`;
-                });
-            } catch (e) { div.innerHTML = "Error de conexión."; }
+            const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=21');
+            const json = await res.json();
+            div.innerHTML = "";
+            json.data.forEach(s => {
+                div.innerHTML += `<div class="set-card" onclick="abrirSet('${s.id}', '${s.name}')"><img src="${s.images.logo}"><br><strong>${s.name}</strong></div>`;
+            });
         };
 
         window.abrirSet = async (id, nombre) => {
             window.cambiarPantalla('pantalla-detalle-set');
             document.getElementById('titulo-set-actual').innerText = nombre;
+            
+            window.modoSeleccionLote = false;
+            window.cartasSeleccionadas.clear();
+            window.actualizarUIModoLote();
+            document.getElementById('select-orden').value = "numero";
+
             const galeria = document.getElementById('galeria-cartas');
             galeria.innerHTML = "<p>Descargando cartas...</p>";
             try {
                 const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}&pageSize=250`);
                 const json = await res.json();
-                galeria.innerHTML = "";
-                json.data.forEach(c => {
-                    window.cacheCartas[c.id] = c;
-                    const clase = window.miVaultIds.includes(c.id) ? "" : "no-obtenida";
-                    galeria.innerHTML += `<div class="carta-wrapper ${clase}" id="wrap-${c.id}"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`;
-                });
-            } catch (e) { galeria.innerHTML = "Error al cargar el set."; }
+                window.cartasSetActual = json.data;
+                json.data.forEach(c => window.cacheCartas[c.id] = c);
+                window.pintarGaleriaSet();
+            } catch (e) { galeria.innerHTML = "Error de red."; }
         };
 
-        window.buscarMercado = async () => {
-            const texto = document.getElementById('buscador-input').value;
-            const resDiv = document.getElementById('resultados-mercado');
-            if(texto === "") return;
-            resDiv.innerHTML = "<p>Buscando...</p>";
-            const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:${texto}`);
-            const json = await res.json();
-            resDiv.innerHTML = "";
-            json.data.forEach(c => {
-                window.cacheCartas[c.id] = c;
-                resDiv.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`;
+        window.pintarGaleriaSet = () => {
+            const galeria = document.getElementById('galeria-cartas');
+            galeria.innerHTML = "";
+            window.cartasSetActual.forEach(c => {
+                const laTengo = window.miVaultIds.includes(c.id);
+                const claseBase = laTengo ? "" : "no-obtenida";
+                const claseSel = window.cartasSeleccionadas.has(c.id) ? "seleccionada" : "";
+                
+                galeria.innerHTML += `
+                    <div id="wrap-${c.id}" class="carta-wrapper ${claseBase} ${claseSel}" onclick="interactuarConCarta('${c.id}')">
+                        <div class="marca-seleccion">✓</div>
+                        <img src="${c.images.small}">
+                        <div style="font-size: 12px; margin-top:5px; text-align:center; color: var(--text-muted);">
+                            ${c.cardmarket?.prices?.averageSellPrice ? c.cardmarket.prices.averageSellPrice.toFixed(2) + ' €' : '-'}
+                        </div>
+                    </div>`;
             });
         };
 
+        window.ordenarSet = () => {
+            const criterio = document.getElementById('select-orden').value;
+            window.cartasSetActual.sort((a, b) => {
+                if (criterio === 'precioAlto') return (b.cardmarket?.prices?.averageSellPrice || 0) - (a.cardmarket?.prices?.averageSellPrice || 0);
+                if (criterio === 'precioBajo') return (a.cardmarket?.prices?.averageSellPrice || 0) - (b.cardmarket?.prices?.averageSellPrice || 0);
+                if (criterio === 'nombre') return a.name.localeCompare(b.name);
+                return parseInt(a.number) - parseInt(b.number);
+            });
+            window.pintarGaleriaSet();
+        };
+
+        window.interactuarConCarta = (idCarta) => {
+            if (window.modoSeleccionLote) {
+                const wrapper = document.getElementById(`wrap-${idCarta}`);
+                if (window.cartasSeleccionadas.has(idCarta)) {
+                    window.cartasSeleccionadas.delete(idCarta); wrapper.classList.remove('seleccionada');
+                } else {
+                    window.cartasSeleccionadas.add(idCarta); wrapper.classList.add('seleccionada');
+                }
+                document.getElementById('contador-lote').innerText = `${window.cartasSeleccionadas.size} sel.`;
+            } else {
+                window.abrirDrawer(idCarta);
+            }
+        };
+
+        window.toggleModoLote = () => {
+            window.modoSeleccionLote = !window.modoSeleccionLote;
+            window.cartasSeleccionadas.clear();
+            window.pintarGaleriaSet();
+            window.actualizarUIModoLote();
+        };
+
+        window.actualizarUIModoLote = () => {
+            const btn = document.getElementById('btn-toggle-lote');
+            const menu = document.getElementById('acciones-lote');
+            if (window.modoSeleccionLote) {
+                btn.innerText = "Cancelar Selección"; btn.style.background = "var(--border)";
+                menu.style.display = "flex"; document.getElementById('contador-lote').innerText = "0 sel.";
+            } else {
+                btn.innerText = "Selección en Lote"; btn.style.background = "transparent";
+                menu.style.display = "none";
+            }
+        };
+
+        window.guardarLoteNube = async (accion) => {
+            if (!usuarioActual) return alert("Inicia sesión con Google para modificar tu bóveda.");
+            if (window.cartasSeleccionadas.size === 0) return;
+            
+            const btn = document.getElementById(accion === 'add' ? 'btn-lote-add' : 'btn-lote-remove');
+            const originalText = btn.innerText;
+            btn.innerText = "Sincronizando...";
+
+            const arraySeleccion = Array.from(window.cartasSeleccionadas);
+            
+            if (accion === 'add') {
+                window.miVaultIds = [...new Set([...window.miVaultIds, ...arraySeleccion])];
+            } else if (accion === 'remove') {
+                window.miVaultIds = window.miVaultIds.filter(id => !arraySeleccion.includes(id));
+            }
+
+            await guardarEnNube();
+            
+            btn.innerText = originalText;
+            window.toggleModoLote();
+        };
+
         window.abrirDrawer = async (idCarta) => {
-            document.getElementById('drawer-overlay').style.opacity = '1';
-            document.getElementById('drawer-overlay').style.pointerEvents = 'all';
-            document.getElementById('side-drawer').style.right = '0';
-            
+            document.getElementById('drawer-overlay').style.opacity = '1'; document.getElementById('drawer-overlay').style.pointerEvents = 'all'; document.getElementById('side-drawer').style.right = '0';
             cartaActiva = window.cacheCartas[idCarta];
-            document.getElementById('drawer-img').src = cartaActiva.images.large;
-            document.getElementById('drawer-nombre').innerText = cartaActiva.name;
-            document.getElementById('drawer-set').innerText = cartaActiva.set.name;
-            
-            const p = cartaActiva.cardmarket?.prices?.averageSellPrice;
-            document.getElementById('drawer-precio').innerText = p ? p.toFixed(2) + " €" : "N/D";
+            document.getElementById('drawer-img').src = cartaActiva.images.large; document.getElementById('drawer-nombre').innerText = cartaActiva.name; document.getElementById('drawer-set').innerText = cartaActiva.set.name;
+            const p = cartaActiva.cardmarket?.prices?.averageSellPrice; document.getElementById('drawer-precio').innerText = p ? p.toFixed(2) + " €" : "N/D";
             document.getElementById('drawer-rareza').innerText = cartaActiva.rarity || 'Normal';
-            document.getElementById('drawer-id').innerText = cartaActiva.id;
-            
             window.actualizarBotonDrawer();
         };
 
-        window.cerrarDrawer = () => {
-            document.getElementById('drawer-overlay').style.opacity = '0';
-            document.getElementById('drawer-overlay').style.pointerEvents = 'none';
-            document.getElementById('side-drawer').style.right = '-450px';
-        };
+        window.cerrarDrawer = () => { document.getElementById('drawer-overlay').style.opacity = '0'; document.getElementById('drawer-overlay').style.pointerEvents = 'none'; document.getElementById('side-drawer').style.right = '-450px'; };
 
         window.actualizarBotonDrawer = () => {
             const btn = document.getElementById('btn-vault');
-            if(window.miVaultIds.includes(cartaActiva.id)) { 
-                btn.innerText = "Quitar de The Vault"; btn.style.background = "var(--surface)"; btn.style.color = "var(--text-main)"; 
-            } else { 
-                btn.innerText = "Añadir a The Vault"; btn.style.background = "var(--accent)"; btn.style.color = "var(--accent-text)"; 
-            }
+            if(window.miVaultIds.includes(cartaActiva.id)) { btn.innerText = "Quitar de The Vault"; btn.style.background = "var(--surface)"; btn.style.color = "var(--text-main)"; } 
+            else { btn.innerText = "Añadir a The Vault"; btn.style.background = "var(--accent)"; btn.style.color = "var(--accent-text)"; }
         };
 
-        // ACCIÓN PRINCIPAL: Guardar o Borrar carta de la Nube
         window.toggleVault = async () => {
-            if (!usuarioActual) {
-                alert("🔒 Para guardar cartas debes Iniciar Sesión con Google primero.");
-                return;
-            }
-            
-            const id = cartaActiva.id;
-            const btn = document.getElementById('btn-vault');
-            btn.innerText = "Sincronizando..."; // Feedback visual
-            
-            if (window.miVaultIds.includes(id)) {
-                window.miVaultIds = window.miVaultIds.filter(x => x !== id);
-            } else {
-                window.miVaultIds.push(id);
-            }
-            
-            await guardarEnNube(); // Subir a Firebase
+            if (!usuarioActual) return alert("Inicia Sesión con Google primero.");
+            const id = cartaActiva.id; const btn = document.getElementById('btn-vault'); btn.innerText = "Sincronizando...";
+            if (window.miVaultIds.includes(id)) window.miVaultIds = window.miVaultIds.filter(x => x !== id); else window.miVaultIds.push(id);
+            await guardarEnNube();
             window.actualizarBotonDrawer();
-            
-            // Refrescar opacidad si estamos viendo un set
             const wrapper = document.getElementById(`wrap-${id}`);
             if(wrapper) wrapper.className = window.miVaultIds.includes(id) ? "carta-wrapper" : "carta-wrapper no-obtenida";
         };
 
         window.cargarBovedaUI = async () => {
             const grid = document.getElementById('grid-boveda');
-            if (!usuarioActual) { 
-                grid.innerHTML = "<p>Inicia sesión con Google para ver tu bóveda en la nube.</p>"; 
-                document.getElementById('valor-total-boveda').innerText = "0.00 €";
-                document.getElementById('contador-cartas').innerText = "0";
-                return; 
-            }
-            if (window.miVaultIds.length === 0) { 
-                grid.innerHTML = "<p style='color: var(--text-muted);'>Tu bóveda está vacía. Añade cartas desde Expansiones o el Mercado.</p>"; 
-                document.getElementById('valor-total-boveda').innerText = "0.00 €";
-                document.getElementById('contador-cartas').innerText = "0";
-                return; 
-            }
-            
-            grid.innerHTML = "<p>Descargando tasación desde la nube...</p>";
+            if (!usuarioActual) { grid.innerHTML = "<p>Inicia sesión con Google para ver tu bóveda.</p>"; return; }
+            if (window.miVaultIds.length === 0) { grid.innerHTML = "<p>Tu bóveda está vacía.</p>"; document.getElementById('valor-total-boveda').innerText = "0.00 €"; document.getElementById('contador-cartas').innerText = "0"; return; }
+            grid.innerHTML = "<p>Descargando tasación...</p>";
             try {
-                // Descargamos los datos actualizados de las cartas que el usuario tiene guardadas
                 const query = window.miVaultIds.map(id => `id:${id}`).join(' OR ');
                 const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=${query}`);
                 const json = await res.json();
-                
-                let suma = 0;
-                grid.innerHTML = "";
-                
-                json.data.forEach(c => {
-                    window.cacheCartas[c.id] = c;
-                    suma += c.cardmarket?.prices?.averageSellPrice || 0;
-                    grid.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`;
-                });
-                
-                document.getElementById('valor-total-boveda').innerText = suma.toFixed(2) + " €";
-                document.getElementById('contador-cartas').innerText = json.data.length;
-                
-            } catch (error) {
-                grid.innerHTML = "<p>Error al sincronizar la bóveda.</p>";
-            }
+                let suma = 0; grid.innerHTML = "";
+                json.data.forEach(c => { window.cacheCartas[c.id] = c; suma += c.cardmarket?.prices?.averageSellPrice || 0; grid.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`; });
+                document.getElementById('valor-total-boveda').innerText = suma.toFixed(2) + " €"; document.getElementById('contador-cartas').innerText = json.data.length;
+            } catch (e) { grid.innerHTML = "Error de red."; }
+        };
+
+        window.buscarMercado = async () => {
+            const t = document.getElementById('buscador-input').value; const r = document.getElementById('resultados-mercado');
+            if(t==="") return; r.innerHTML = "Buscando...";
+            const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:${t}`); const json = await res.json();
+            r.innerHTML = ""; json.data.forEach(c => { window.cacheCartas[c.id] = c; r.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`; });
         };
     </script>
 </body>

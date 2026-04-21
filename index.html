@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PokéTasador Minimal</title>
     <style>
-        /* VARIABLES CSS: El corazón del Modo Claro / Oscuro */
         :root {
             --bg: #ffffff;
             --surface: #f9fafb;
@@ -18,7 +17,6 @@
             --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
 
-        /* Clase dinámica para el Modo Oscuro */
         body.dark-mode {
             --bg: #0f172a;
             --surface: #1e293b;
@@ -30,458 +28,445 @@
         }
 
         * { box-sizing: border-box; }
+        body { font-family: var(--font-family); background-color: var(--bg); color: var(--text-main); margin: 0; display: flex; height: 100vh; overflow: hidden; transition: 0.3s; }
 
-        body {
-            font-family: var(--font-family);
-            background-color: var(--bg);
-            color: var(--text-main);
-            margin: 0; display: flex; height: 100vh; overflow: hidden;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        /* 1. SIDEBAR MINIMALISTA */
-        nav.sidebar {
-            width: 260px;
-            background-color: var(--bg);
-            border-right: 1px solid var(--border);
-            display: flex; flex-direction: column;
-            padding: 30px 20px;
-            transition: 0.3s;
-        }
-
+        /* NAVEGACIÓN SIDEBAR */
+        nav.sidebar { width: 260px; background-color: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 30px 20px; transition: 0.3s; z-index: 10; }
         .logo-area { font-size: 18px; font-weight: 700; margin-bottom: 40px; display: flex; align-items: center; justify-content: space-between; }
-        
         .menu-items { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-        .menu-items button {
-            background: none; border: none; color: var(--text-muted);
-            padding: 12px 15px; text-align: left; font-size: 15px; font-weight: 500;
-            border-radius: 8px; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; gap: 12px;
-        }
-
+        .menu-items button { background: none; border: none; color: var(--text-muted); padding: 12px 15px; text-align: left; font-size: 15px; font-weight: 500; border-radius: 8px; cursor: pointer; transition: 0.2s; }
         .menu-items button:hover { background-color: var(--surface); color: var(--text-main); }
         .menu-items button.activo { background-color: var(--accent); color: var(--accent-text); }
-
         .btn-theme { margin-top: auto; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); padding: 10px; border-radius: 8px; font-weight: 600; }
 
-        /* 2. ZONA PRINCIPAL */
-        main { flex: 1; overflow-y: auto; padding: 50px 60px; }
+        /* ZONA PRINCIPAL */
+        main { flex: 1; overflow-y: auto; padding: 50px 60px; position: relative; }
         .pantalla { display: none; max-width: 1200px; margin: auto; animation: fade 0.4s ease; }
         .pantalla.activa { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
-
         h2 { font-size: 28px; font-weight: 700; margin-top: 0; margin-bottom: 30px; letter-spacing: -0.5px; }
 
-        /* Inputs y Botones Limpios */
-        input {
-            width: 100%; max-width: 400px; padding: 14px 20px; font-size: 15px;
-            background: var(--surface); border: 1px solid var(--border);
-            color: var(--text-main); border-radius: 8px; outline: none; transition: 0.2s;
-        }
-        input:focus { border-color: var(--accent); }
-        
-        .btn {
-            background: var(--accent); color: var(--accent-text); border: none;
-            padding: 14px 24px; border-radius: 8px; font-size: 15px; font-weight: 600;
-            cursor: pointer; transition: 0.2s;
-        }
+        /* BOTONES E INPUTS */
+        .btn { background: var(--accent); color: var(--accent-text); border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
         .btn:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
         .btn-outline:hover { background: var(--surface); }
+        select { padding: 10px 15px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); font-size: 14px; outline: none; cursor: pointer; }
 
-        /* Grillas y Cartas */
-        .grid-galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 20px; margin-top: 20px; }
-        .carta-galeria { 
-            width: 100%; border-radius: 10px; cursor: pointer; transition: 0.3s ease; 
-            border: 1px solid transparent; 
+        /* NUEVO: GRID PARA LOS SETS (3 por fila aprox) */
+        .grid-sets {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
         }
-        .carta-galeria:hover { transform: translateY(-5px); border-color: var(--border); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
-        .no-obtenida { filter: grayscale(100%) opacity(0.4); }
+        
+        .set-card {
+            background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+            padding: 25px; cursor: pointer; transition: 0.3s; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center;
+        }
+        .set-card:hover { transform: translateY(-5px); border-color: var(--text-muted); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+        .set-card img.set-logo { max-width: 80%; height: 80px; object-fit: contain; margin-bottom: 15px; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.1)); }
+        .set-card .set-data { font-size: 14px; color: var(--text-muted); margin-top: 10px;}
 
-        /* Listas de Sets */
-        .set-item {
-            display: flex; align-items: center; padding: 15px 20px;
-            background: var(--surface); border: 1px solid var(--border);
-            border-radius: 10px; margin-bottom: 10px; cursor: pointer; transition: 0.2s;
-        }
-        .set-item:hover { border-color: var(--text-muted); }
-        .set-item img { height: 24px; margin-right: 20px; }
+        /* GALERÍA DE CARTAS Y MODO SELECCIÓN */
+        .grid-galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; margin-top: 20px; }
+        
+        .carta-wrapper { position: relative; cursor: pointer; transition: 0.2s; border-radius: 10px; }
+        .carta-wrapper img { width: 100%; border-radius: 10px; display: block; border: 3px solid transparent; transition: 0.2s; }
+        .carta-wrapper:hover { transform: translateY(-5px); }
+        
+        .no-obtenida img { filter: grayscale(100%) opacity(0.4); }
+        
+        /* Efecto al seleccionar en lote */
+        .carta-wrapper.seleccionada img { border-color: var(--success); filter: grayscale(0%) opacity(1); transform: scale(0.95); }
+        .marca-seleccion { display: none; position: absolute; top: 10px; right: 10px; background: var(--success); color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; box-shadow: 0 2px 5px rgba(0,0,0,0.3); z-index: 2;}
+        .carta-wrapper.seleccionada .marca-seleccion { display: block; }
 
-        /* The Vault Dashboard */
-        .dashboard-header {
-            display: flex; gap: 20px; margin-bottom: 40px;
-        }
-        .metric-card {
-            flex: 1; padding: 30px; background: var(--surface); border: 1px solid var(--border);
-            border-radius: 12px; display: flex; flex-direction: column; justify-content: center;
-        }
-        .metric-card p { margin: 0 0 10px 0; color: var(--text-muted); font-size: 14px; font-weight: 500; text-transform: uppercase; letter-spacing: 1px;}
+        /* CABECERA DEL SET (Toolbar) */
+        .set-header-container { display: flex; align-items: center; justify-content: space-between; margin-bottom: 30px; padding-bottom: 20px; border-bottom: 1px solid var(--border); }
+        .set-header-info { display: flex; align-items: center; gap: 20px; }
+        .set-header-info img { height: 60px; object-fit: contain; }
+        
+        .action-toolbar { display: flex; gap: 15px; align-items: center; background: var(--surface); padding: 15px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 20px;}
+        .lote-actions { display: none; gap: 10px; border-left: 1px solid var(--border); padding-left: 15px; }
+
+        /* THE VAULT DASHBOARD */
+        .dashboard-header { display: flex; gap: 20px; margin-bottom: 40px; }
+        .metric-card { flex: 1; padding: 30px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
+        .metric-card p { margin: 0 0 10px 0; color: var(--text-muted); font-size: 14px; text-transform: uppercase; letter-spacing: 1px;}
         .metric-card h3 { margin: 0; font-size: 42px; font-weight: 300; }
 
-        /* 3. OVERLAY: SIDE DRAWER (Sustituye al modal clásico) */
-        .drawer-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.3); backdrop-filter: blur(3px);
-            opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000;
-        }
-        .drawer {
-            position: fixed; top: 0; right: -450px; width: 450px; height: 100vh;
-            background: var(--bg); border-left: 1px solid var(--border);
-            transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Animación muy suave de Apple */
-            z-index: 1001; display: flex; flex-direction: column;
-            box-shadow: -10px 0 30px rgba(0,0,0,0.05);
-        }
-
-        .drawer-header { padding: 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
+        /* OVERLAY / DRAWER (Igual que antes) */
+        .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000; }
+        .drawer { position: fixed; top: 0; right: -450px; width: 450px; height: 100vh; background: var(--bg); border-left: 1px solid var(--border); transition: right 0.4s cubic-bezier(0.16, 1, 0.3, 1); z-index: 1001; display: flex; flex-direction: column; }
+        .drawer-header { padding: 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; }
         .drawer-header h3 { margin: 0; font-size: 24px; }
-        .drawer-close { background: none; border: none; font-size: 28px; color: var(--text-muted); cursor: pointer; line-height: 1; }
-        
+        .drawer-close { background: none; border: none; font-size: 28px; color: var(--text-muted); cursor: pointer; }
         .drawer-content { flex: 1; overflow-y: auto; padding: 30px; }
-        
-        /* Imagen en el Drawer con efecto 3D simplificado */
-        .carta-drawer-container { perspective: 1000px; display: flex; justify-content: center; margin-bottom: 30px; }
-        .carta-drawer-container img { 
-            width: 220px; border-radius: 10px; transition: transform 0.1s; 
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
-        }
-
+        .carta-drawer-container img { width: 220px; border-radius: 10px; box-shadow: 0 20px 40px rgba(0,0,0,0.15); display: block; margin: 0 auto 30px auto;}
         .info-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--surface); }
         .info-label { color: var(--text-muted); font-size: 14px; }
         .info-value { font-weight: 600; text-align: right;}
-
         .drawer-footer { padding: 30px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: var(--surface); }
-        .drawer-footer .btn { flex: 1; padding: 15px; font-size: 14px; }
+        .drawer-footer .btn { flex: 1; padding: 15px; }
 
     </style>
 </head>
 <body>
 
     <nav class="sidebar">
-        <div class="logo-area">
-            <span>⚪ PokéTasador</span>
-        </div>
+        <div class="logo-area"><span>⚪ PokéTasador</span></div>
         <div class="menu-items">
             <button id="btn-inicio" class="activo" onclick="cambiarPantalla('pantalla-inicio')">✦ Inicio</button>
             <button id="btn-boveda" onclick="cambiarPantalla('pantalla-boveda')">◒ The Vault</button>
             <button id="btn-wishlist" onclick="cambiarPantalla('pantalla-wishlist')">★ Wishlist</button>
             <button id="btn-colecciones" onclick="cambiarPantalla('pantalla-colecciones')">📚 Expansiones</button>
-            <button id="btn-mercado" onclick="cambiarPantalla('pantalla-mercado')">⚲ Buscar Cartas</button>
+            <button id="btn-mercado" onclick="cambiarPantalla('pantalla-mercado')">⚲ Mercado</button>
         </div>
-        <button class="btn-theme" onclick="toggleTema()">◐ Cambiar Tema</button>
+        <button class="btn-theme" onclick="toggleTema()">◐ Tema</button>
     </nav>
 
     <main>
-        <div id="pantalla-inicio" class="pantalla activa">
-            <h2>Panel de Control</h2>
-            <div class="metric-card" style="margin-bottom: 20px;">
-                <p>Estado del Mercado</p>
-                <h3 style="font-size: 24px;">Estable. Tendencia neutral en sets clásicos.</h3>
-            </div>
-            <p style="color: var(--text-muted); line-height: 1.6;">Navega por el menú lateral. Añade cartas a "The Vault" para trackear tu patrimonio, o a "Wishlist" para marcar tus objetivos de compra.</p>
-        </div>
-
+        <div id="pantalla-inicio" class="pantalla activa"><h2>Panel de Control</h2><p>Selecciona una opción en el menú lateral.</p></div>
+        
         <div id="pantalla-boveda" class="pantalla">
             <h2>The Vault</h2>
             <div class="dashboard-header">
-                <div class="metric-card">
-                    <p>Valor Total Estimado</p>
-                    <h3 id="valor-total-boveda" style="color: var(--success);">0.00 €</h3>
-                </div>
-                <div class="metric-card">
-                    <p>Cartas Registradas</p>
-                    <h3 id="contador-cartas">0</h3>
-                </div>
+                <div class="metric-card"><p>Valor Total</p><h3 id="valor-total-boveda" style="color: var(--success);">0.00 €</h3></div>
+                <div class="metric-card"><p>Cartas</p><h3 id="contador-cartas">0</h3></div>
             </div>
             <div id="grid-boveda" class="grid-galeria"></div>
         </div>
 
         <div id="pantalla-wishlist" class="pantalla">
-            <h2>Lista de Deseos</h2>
-            <p style="color: var(--text-muted);">Cartas que estás buscando comprar. Mantente atento a los precios.</p>
-            <div id="grid-wishlist" class="grid-galeria"></div>
+            <h2>Lista de Deseos</h2><div id="grid-wishlist" class="grid-galeria"></div>
+        </div>
+
+        <div id="pantalla-mercado" class="pantalla">
+            <h2>Mercado</h2>
+            <input type="text" id="buscador-input" placeholder="Nombre (ej. Mewtwo)" style="padding:10px; width:300px;">
+            <button class="btn" onclick="buscarMercado()">Buscar</button>
+            <div id="resultados-mercado" class="grid-galeria"></div>
         </div>
 
         <div id="pantalla-colecciones" class="pantalla">
             <h2>Catálogo de Expansiones</h2>
-            <div id="lista-sets"></div>
+            <div id="lista-sets" class="grid-sets"></div>
         </div>
 
         <div id="pantalla-detalle-set" class="pantalla">
-            <button class="btn btn-outline" style="margin-bottom: 20px; padding: 8px 16px; font-size:13px;" onclick="cambiarPantalla('pantalla-colecciones')">← Volver</button>
-            <h2 id="titulo-set-actual">Set</h2>
-            <div id="galeria-cartas" class="grid-galeria"></div>
-        </div>
-
-        <div id="pantalla-mercado" class="pantalla">
-            <h2>Búsqueda Global</h2>
-            <div style="display: flex; gap: 10px; margin-bottom: 30px;">
-                <input type="text" id="buscador-input" placeholder="Nombre de la carta (ej. Mewtwo)">
-                <button class="btn" onclick="buscarMercado()">Buscar</button>
+            <button class="btn btn-outline" style="margin-bottom: 20px; padding: 6px 12px; font-size:12px;" onclick="cambiarPantalla('pantalla-colecciones')">← Volver a Expansiones</button>
+            
+            <div class="set-header-container">
+                <div class="set-header-info">
+                    <img id="logo-set-actual" src="" alt="Logo Set">
+                    <div>
+                        <h2 id="titulo-set-actual" style="margin:0;">Set Name</h2>
+                        <p id="datos-set-actual" style="color: var(--text-muted); margin: 5px 0 0 0;">Cargando datos...</p>
+                    </div>
+                </div>
             </div>
-            <div id="resultados-mercado" class="grid-galeria"></div>
+
+            <div class="action-toolbar">
+                <div style="display: flex; gap: 10px; align-items: center;">
+                    <span style="font-size: 14px; font-weight: 600;">Ordenar por:</span>
+                    <select id="select-orden" onchange="ordenarSet()">
+                        <option value="numero">Nº de Catálogo</option>
+                        <option value="precioAlto">Precio: Más Alto primero</option>
+                        <option value="precioBajo">Precio: Más Bajo primero</option>
+                        <option value="nombre">Nombre (A-Z)</option>
+                    </select>
+                </div>
+
+                <div style="flex: 1;"></div> <button id="btn-toggle-lote" class="btn btn-outline" onclick="toggleModoLote()">Modo Selección Lote</button>
+                
+                <div id="acciones-lote" class="lote-actions">
+                    <span id="contador-lote" style="font-weight: 600; font-size: 14px;">0 sel.</span>
+                    <button class="btn" style="background: var(--success);" onclick="guardarLote('vault')">+ Vault</button>
+                    <button class="btn btn-outline" onclick="guardarLote('wishlist')">★ Wishlist</button>
+                </div>
+            </div>
+
+            <div id="galeria-cartas" class="grid-galeria"></div>
         </div>
     </main>
 
     <div class="drawer-overlay" id="drawer-overlay" onclick="cerrarDrawer()"></div>
     <div class="drawer" id="side-drawer">
         <div class="drawer-header">
-            <div>
-                <h3 id="drawer-nombre">Cargando...</h3>
-                <span id="drawer-set" style="color: var(--text-muted); font-size: 14px;">Set</span>
-            </div>
+            <div><h3 id="drawer-nombre">Cargando...</h3><span id="drawer-set" style="color: var(--text-muted); font-size: 14px;">Set</span></div>
             <button class="drawer-close" onclick="cerrarDrawer()">×</button>
         </div>
-        
         <div class="drawer-content">
-            <div class="carta-drawer-container" onmousemove="moverCarta(event)" onmouseleave="resetearCarta()">
-                <img id="drawer-img" src="" alt="Carta">
-            </div>
-
-            <div class="info-row">
-                <span class="info-label">Precio Medio (Cardmarket)</span>
-                <span class="info-value" id="drawer-precio" style="color: var(--success); font-size: 18px;">0.00 €</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Rareza</span>
-                <span class="info-value" id="drawer-rareza">-</span>
-            </div>
-            <div class="info-row">
-                <span class="info-label">Artista</span>
-                <span class="info-value" id="drawer-artista">-</span>
-            </div>
-            <div class="info-row" style="flex-direction: column; align-items: flex-start; border:none; padding-top: 20px;">
-                <span class="info-label" style="margin-bottom: 10px;">ID de Catálogo</span>
-                <span class="info-value" id="drawer-id" style="font-family: monospace; background: var(--surface); padding: 5px 10px; border-radius: 5px;">-</span>
-            </div>
+            <div class="carta-drawer-container"><img id="drawer-img" src="" alt="Carta"></div>
+            <div class="info-row"><span class="info-label">Cardmarket</span><span class="info-value" id="drawer-precio" style="color: var(--success); font-size: 18px;">0.00 €</span></div>
+            <div class="info-row"><span class="info-label">Rareza</span><span class="info-value" id="drawer-rareza">-</span></div>
+            <div class="info-row"><span class="info-label">ID</span><span class="info-value" id="drawer-id">-</span></div>
         </div>
-
         <div class="drawer-footer">
-            <button class="btn" id="btn-vault" onclick="toggleVault()">Añadir a Vault</button>
-            <button class="btn btn-outline" id="btn-wishlist-action" onclick="toggleWishlist()">★ Wishlist</button>
+            <button class="btn" id="btn-vault" onclick="toggleVault()">Vault</button>
+            <button class="btn btn-outline" id="btn-wishlist-action" onclick="toggleWishlist()">Wishlist</button>
         </div>
     </div>
 
     <script>
-        // MEMORIA Y ESTADO GLOBAL
+        // MEMORIA Y ESTADO
         let miVaultIds = JSON.parse(localStorage.getItem('miVault')) || [];
         let miWishlistIds = JSON.parse(localStorage.getItem('miWishlist')) || [];
-        let cartaActiva = null; 
         let cacheCartas = {}; 
+        let cartaActiva = null; 
 
-        // INICIALIZACIÓN
-        window.onload = () => {
-            // Cargar preferencia de tema
-            if(localStorage.getItem('tema') === 'dark') {
-                document.body.classList.add('dark-mode');
-            }
-        };
+        // ESTADO DEL SET ACTUAL (Nuevas variables para la lógica avanzada)
+        let cartasSetActual = []; // Guardamos todas las cartas descargadas para no volver a pedirlas al ordenar
+        let modoSeleccionLote = false;
+        let cartasSeleccionadas = new Set(); // Usamos Set (Estructura de C++) para no duplicar selecciones
 
-        // MODO OSCURO
-        function toggleTema() {
-            document.body.classList.toggle('dark-mode');
-            const esOscuro = document.body.classList.contains('dark-mode');
-            localStorage.setItem('tema', esOscuro ? 'dark' : 'light');
-        }
+        window.onload = () => { if(localStorage.getItem('tema') === 'dark') document.body.classList.add('dark-mode'); };
+        function toggleTema() { document.body.classList.toggle('dark-mode'); localStorage.setItem('tema', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); }
 
         // NAVEGACIÓN
         function cambiarPantalla(idPantalla) {
             document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
             document.getElementById(idPantalla).classList.add('activa');
-            
             document.querySelectorAll('.menu-items button').forEach(b => b.classList.remove('activo'));
-            
-            // LA SOLUCIÓN: Comprobamos si el botón existe antes de darle color
-            const botonMenu = document.getElementById(`btn-${idPantalla.split('-')[1]}`);
-            if (botonMenu) {
-                botonMenu.classList.add('activo');
-            }
+            const btn = document.getElementById(`btn-${idPantalla.split('-')[1]}`);
+            if(btn) btn.classList.add('activo');
 
             if(idPantalla === 'pantalla-colecciones') cargarSets();
             if(idPantalla === 'pantalla-boveda') cargarGaleriaMemoria(miVaultIds, 'grid-boveda', true);
             if(idPantalla === 'pantalla-wishlist') cargarGaleriaMemoria(miWishlistIds, 'grid-wishlist', false);
         }
 
-        // CARGAR DATOS DE MEMORIA (Vault o Wishlist)
-        async function cargarGaleriaMemoria(listaIds, contenedorId, esVault) {
-            const grid = document.getElementById(contenedorId);
-            if (listaIds.length === 0) {
-                grid.innerHTML = "<p style='color: var(--text-muted);'>No hay cartas registradas aquí aún.</p>";
-                if(esVault) {
-                    document.getElementById('valor-total-boveda').innerText = "0.00 €";
-                    document.getElementById('contador-cartas').innerText = "0";
-                }
-                return;
-            }
-            grid.innerHTML = "<p>Cargando datos...</p>";
-            
-            try {
-                const query = listaIds.map(id => `id:${id}`).join(' OR ');
-                const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=${query}`);
-                const datos = await res.json();
-                
-                let suma = 0;
-                grid.innerHTML = "";
-                
-                datos.data.forEach(carta => {
-                    cacheCartas[carta.id] = carta; // Guardar en caché
-                    suma += carta.cardmarket?.prices?.averageSellPrice || 0;
-                    grid.innerHTML += `<img src="${carta.images.small}" class="carta-galeria" onclick="abrirDrawer('${carta.id}')">`;
-                });
-
-                if(esVault) {
-                    document.getElementById('valor-total-boveda').innerText = suma.toFixed(2) + " €";
-                    document.getElementById('contador-cartas').innerText = datos.data.length;
-                }
-            } catch (e) { grid.innerHTML = "<p>Error de red.</p>"; }
-        }
-
-        // EL DRAWER (OVERLAY MINIMALISTA)
-        async function abrirDrawer(idCarta) {
-            // Mostrar drawer
-            document.getElementById('drawer-overlay').style.opacity = '1';
-            document.getElementById('drawer-overlay').style.pointerEvents = 'all';
-            document.getElementById('side-drawer').style.right = '0';
-            
-            try {
-                let carta = cacheCartas[idCarta];
-                if (!carta) {
-                    const res = await fetch(`https://api.pokemontcg.io/v2/cards/${idCarta}`);
-                    const json = await res.json();
-                    carta = json.data;
-                    cacheCartas[idCarta] = carta;
-                }
-                cartaActiva = carta;
-
-                // Pintar datos
-                document.getElementById('drawer-img').src = carta.images.large;
-                document.getElementById('drawer-nombre').innerText = carta.name;
-                document.getElementById('drawer-set').innerText = carta.set.name;
-                
-                const precio = carta.cardmarket?.prices?.averageSellPrice;
-                document.getElementById('drawer-precio').innerText = precio ? precio.toFixed(2) + " €" : "N/D";
-                document.getElementById('drawer-rareza').innerText = carta.rarity || 'Normal';
-                document.getElementById('drawer-artista').innerText = carta.artist || 'Desconocido';
-                document.getElementById('drawer-id').innerText = carta.id;
-
-                actualizarBotonesDrawer();
-
-            } catch (error) { console.error(error); }
-        }
-
-        function cerrarDrawer() {
-            document.getElementById('drawer-overlay').style.opacity = '0';
-            document.getElementById('drawer-overlay').style.pointerEvents = 'none';
-            document.getElementById('side-drawer').style.right = '-450px';
-            resetearCarta();
-        }
-
-        // ACCIONES DE BOTONES EN DRAWER
-        function actualizarBotonesDrawer() {
-            const btnVault = document.getElementById('btn-vault');
-            const btnWish = document.getElementById('btn-wishlist-action');
-            const id = cartaActiva.id;
-
-            if (miVaultIds.includes(id)) {
-                btnVault.innerText = "Quitar de Vault";
-                btnVault.style.background = "var(--surface)"; btnVault.style.color = "var(--text-main)";
-            } else {
-                btnVault.innerText = "Añadir a Vault";
-                btnVault.style.background = "var(--accent)"; btnVault.style.color = "var(--accent-text)";
-            }
-
-            if (miWishlistIds.includes(id)) {
-                btnWish.innerText = "★ Quitar Wishlist";
-                btnWish.style.background = "#fff9c4"; btnWish.style.color = "#f57f17"; btnWish.style.borderColor = "#f57f17";
-            } else {
-                btnWish.innerText = "☆ Wishlist";
-                btnWish.style.background = "transparent"; btnWish.style.color = "var(--text-main)"; btnWish.style.borderColor = "var(--border)";
-            }
-        }
-
-        function toggleVault() {
-            if (!cartaActiva) return;
-            const id = cartaActiva.id;
-            if (miVaultIds.includes(id)) miVaultIds = miVaultIds.filter(x => x !== id);
-            else miVaultIds.push(id);
-            localStorage.setItem('miVault', JSON.stringify(miVaultIds));
-            actualizarBotonesDrawer();
-            actualizarEstadoVisual(id);
-        }
-
-        function toggleWishlist() {
-            if (!cartaActiva) return;
-            const id = cartaActiva.id;
-            if (miWishlistIds.includes(id)) miWishlistIds = miWishlistIds.filter(x => x !== id);
-            else miWishlistIds.push(id);
-            localStorage.setItem('miWishlist', JSON.stringify(miWishlistIds));
-            actualizarBotonesDrawer();
-        }
-
-        function actualizarEstadoVisual(idCarta) {
-            // Si estamos viendo un set, quitar/poner el filtro gris dinámicamente
-            const img = document.getElementById(`img-set-${idCarta}`);
-            if(img) img.className = miVaultIds.includes(idCarta) ? "carta-galeria" : "carta-galeria no-obtenida";
-        }
-
-        // EFECTO 3D MINIMALISTA
-        function moverCarta(e) {
-            const img = document.querySelector('.carta-drawer-container img');
-            const rect = img.getBoundingClientRect();
-            const x = e.clientX - rect.left; const y = e.clientY - rect.top;
-            const rotX = ((y / rect.height) - 0.5) * -20; 
-            const rotY = ((x / rect.width) - 0.5) * 20;
-            img.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale(1.02)`;
-        }
-        function resetearCarta() {
-            const img = document.querySelector('.carta-drawer-container img');
-            if(img) img.style.transform = `rotateX(0deg) rotateY(0deg) scale(1)`;
-        }
-
-        // SETS Y MERCADO
+        // 1. CARGAR SETS EN EL NUEVO GRID
         async function cargarSets() {
             const div = document.getElementById('lista-sets');
-            if (div.innerHTML.includes("set-item")) return;
+            if (div.innerHTML.includes("set-card")) return;
             div.innerHTML = "<p>Cargando catálogo...</p>";
-            const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=15');
-            const json = await res.json();
-            div.innerHTML = "";
-            json.data.forEach(set => {
-                div.innerHTML += `
-                    <div class="set-item" onclick="abrirSet('${set.id}', '${set.name}')">
-                        <img src="${set.images.symbol}">
-                        <div style="flex:1;"><strong>${set.name}</strong></div>
-                        <div style="color: var(--text-muted); font-size:14px;">${set.printedTotal} cartas</div>
+            try {
+                const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=21');
+                const json = await res.json();
+                div.innerHTML = "";
+                json.data.forEach(set => {
+                    // Usamos set.images.logo para que quede espectacular en el recuadro grande
+                    div.innerHTML += `
+                        <div class="set-card" onclick="abrirSet('${set.id}', '${set.name}', '${set.images.logo}', '${set.releaseDate}', ${set.printedTotal})">
+                            <img src="${set.images.logo}" class="set-logo" alt="${set.name}">
+                            <div style="flex:1;"><strong>${set.name}</strong></div>
+                            <div class="set-data">${set.releaseDate.substring(0,4)} • ${set.printedTotal} cartas</div>
+                        </div>`;
+                });
+            } catch (error) { div.innerHTML = "Error al cargar los sets."; }
+        }
+
+        // 2. ABRIR EL DETALLE DE UN SET
+        async function abrirSet(id, nombre, logoUrl, fecha, totalCartas) {
+            cambiarPantalla('pantalla-detalle-set');
+            
+            // Reiniciar estados del lote
+            modoSeleccionLote = false;
+            cartasSeleccionadas.clear();
+            actualizarUIModoLote();
+            document.getElementById('select-orden').value = "numero"; // Resetear select
+
+            // Actualizar Cabecera
+            document.getElementById('titulo-set-actual').innerText = nombre;
+            document.getElementById('logo-set-actual').src = logoUrl;
+            document.getElementById('datos-set-actual').innerText = `Lanzamiento: ${fecha} | ${totalCartas} cartas en la colección`;
+            
+            const galeria = document.getElementById('galeria-cartas');
+            galeria.innerHTML = "<p>Descargando listado de cartas...</p>";
+            
+            try {
+                const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}&pageSize=250`);
+                const json = await res.json();
+                
+                // Guardamos los datos puros en la memoria global para poder ordenarlos luego
+                cartasSetActual = json.data; 
+                json.data.forEach(c => cacheCartas[c.id] = c); // Actualizamos caché general
+
+                pintarGaleriaSet(); // Llamamos a la función de renderizado
+            } catch (error) { galeria.innerHTML = "Error al cargar."; }
+        }
+
+        // 3. MOTOR DE ORDENACIÓN
+        function ordenarSet() {
+            const criterio = document.getElementById('select-orden').value;
+            
+            // Función de ordenación nativa de JavaScript basada en condiciones
+            cartasSetActual.sort((a, b) => {
+                if (criterio === 'precioAlto') {
+                    const precioA = a.cardmarket?.prices?.averageSellPrice || 0;
+                    const precioB = b.cardmarket?.prices?.averageSellPrice || 0;
+                    return precioB - precioA; // Mayor a menor
+                } else if (criterio === 'precioBajo') {
+                    const precioA = a.cardmarket?.prices?.averageSellPrice || 0;
+                    const precioB = b.cardmarket?.prices?.averageSellPrice || 0;
+                    return precioA - precioB; // Menor a mayor
+                } else if (criterio === 'nombre') {
+                    return a.name.localeCompare(b.name); // Alfabético
+                } else {
+                    // Por defecto: 'numero' de catálogo (convirtiendo a entero si se puede)
+                    return parseInt(a.number) - parseInt(b.number);
+                }
+            });
+
+            pintarGaleriaSet(); // Volver a dibujar la galería con el nuevo orden
+        }
+
+        // 4. PINTAR LA GALERÍA DEL SET (Usada al abrir y al ordenar)
+        function pintarGaleriaSet() {
+            const galeria = document.getElementById('galeria-cartas');
+            galeria.innerHTML = "";
+
+            cartasSetActual.forEach(c => {
+                // Saber si ya la tengo
+                const laTengoEnVault = miVaultIds.includes(c.id);
+                // Si la tengo en Vault, la muestro a color. Si no, en escala de grises (no-obtenida)
+                const claseBase = laTengoEnVault ? "" : "no-obtenida";
+                
+                // Saber si está seleccionada en el lote actual
+                const claseSeleccionada = cartasSeleccionadas.has(c.id) ? "seleccionada" : "";
+
+                galeria.innerHTML += `
+                    <div id="wrapper-${c.id}" class="carta-wrapper ${claseBase} ${claseSeleccionada}" onclick="interactuarConCarta('${c.id}')">
+                        <div class="marca-seleccion">✓</div>
+                        <img src="${c.images.small}" alt="${c.name}">
+                        <div style="font-size: 12px; margin-top:5px; text-align:center; color: var(--text-muted);">
+                            ${c.cardmarket?.prices?.averageSellPrice ? c.cardmarket.prices.averageSellPrice.toFixed(2) + ' €' : '-'}
+                        </div>
                     </div>`;
             });
         }
 
-        async function abrirSet(id, nombre) {
-            cambiarPantalla('pantalla-detalle-set');
-            document.getElementById('titulo-set-actual').innerText = nombre;
-            const galeria = document.getElementById('galeria-cartas');
-            galeria.innerHTML = "<p>Obteniendo imágenes...</p>";
-            const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}`);
-            const json = await res.json();
-            galeria.innerHTML = "";
-            json.data.forEach(c => {
-                cacheCartas[c.id] = c; 
-                const clase = miVaultIds.includes(c.id) ? "" : "no-obtenida";
-                galeria.innerHTML += `<img id="img-set-${c.id}" src="${c.images.small}" class="carta-galeria ${clase}" onclick="abrirDrawer('${c.id}')">`;
-            });
+        // 5. INTERACCIÓN (Click normal vs Click en Lote)
+        function interactuarConCarta(idCarta) {
+            if (modoSeleccionLote) {
+                // MODO LOTE: Seleccionar/Deseleccionar
+                const wrapper = document.getElementById(`wrapper-${idCarta}`);
+                if (cartasSeleccionadas.has(idCarta)) {
+                    cartasSeleccionadas.delete(idCarta);
+                    wrapper.classList.remove('seleccionada');
+                } else {
+                    cartasSeleccionadas.add(idCarta);
+                    wrapper.classList.add('seleccionada');
+                }
+                document.getElementById('contador-lote').innerText = `${cartasSeleccionadas.size} sel.`;
+            } else {
+                // MODO NORMAL: Abrir el Drawer de detalles
+                abrirDrawer(idCarta);
+            }
+        }
+
+        // 6. CONTROL DEL MODO LOTE
+        function toggleModoLote() {
+            modoSeleccionLote = !modoSeleccionLote;
+            cartasSeleccionadas.clear(); // Limpiar selecciones previas al cambiar de modo
+            pintarGaleriaSet(); // Repintar para quitar las marcas de selección
+            actualizarUIModoLote();
+        }
+
+        function actualizarUIModoLote() {
+            const btnToggle = document.getElementById('btn-toggle-lote');
+            const menuAcciones = document.getElementById('acciones-lote');
+            
+            if (modoSeleccionLote) {
+                btnToggle.innerText = "Cancelar Selección";
+                btnToggle.style.background = "var(--border)";
+                menuAcciones.style.display = "flex";
+                document.getElementById('contador-lote').innerText = "0 sel.";
+            } else {
+                btnToggle.innerText = "Modo Selección Lote";
+                btnToggle.style.background = "transparent";
+                menuAcciones.style.display = "none";
+            }
+        }
+
+        function guardarLote(destino) {
+            if (cartasSeleccionadas.size === 0) return alert("Selecciona al menos una carta.");
+
+            // Convertir el Set(Objeto) a un Array básico
+            const arraySeleccion = Array.from(cartasSeleccionadas);
+
+            if (destino === 'vault') {
+                // Concatenar lo que teníamos con lo nuevo y quitar duplicados creando un nuevo Set
+                miVaultIds = [...new Set([...miVaultIds, ...arraySeleccion])];
+                localStorage.setItem('miVault', JSON.stringify(miVaultIds));
+            } else if (destino === 'wishlist') {
+                miWishlistIds = [...new Set([...miWishlistIds, ...arraySeleccion])];
+                localStorage.setItem('miWishlist', JSON.stringify(miWishlistIds));
+            }
+
+            // Salir del modo y repintar
+            toggleModoLote(); 
+        }
+
+        // DRAWER Y MEMORIA GLOBAL (Se mantiene igual que la versión anterior)
+        async function abrirDrawer(idCarta) {
+            document.getElementById('drawer-overlay').style.opacity = '1';
+            document.getElementById('drawer-overlay').style.pointerEvents = 'all';
+            document.getElementById('side-drawer').style.right = '0';
+            try {
+                let c = cacheCartas[idCarta];
+                if (!c) { const r = await fetch(`https://api.pokemontcg.io/v2/cards/${idCarta}`); const j = await r.json(); c = j.data; cacheCartas[idCarta] = c; }
+                cartaActiva = c;
+                document.getElementById('drawer-img').src = c.images.large;
+                document.getElementById('drawer-nombre').innerText = c.name;
+                document.getElementById('drawer-set').innerText = c.set.name;
+                const p = c.cardmarket?.prices?.averageSellPrice;
+                document.getElementById('drawer-precio').innerText = p ? p.toFixed(2) + " €" : "N/D";
+                document.getElementById('drawer-rareza').innerText = c.rarity || 'Normal';
+                document.getElementById('drawer-id').innerText = c.id;
+                actualizarBotonesDrawer();
+            } catch (e) { }
+        }
+
+        function cerrarDrawer() { document.getElementById('drawer-overlay').style.opacity = '0'; document.getElementById('drawer-overlay').style.pointerEvents = 'none'; document.getElementById('side-drawer').style.right = '-450px'; }
+        
+        function actualizarBotonesDrawer() {
+            const bv = document.getElementById('btn-vault'); const bw = document.getElementById('btn-wishlist-action');
+            if (miVaultIds.includes(cartaActiva.id)) { bv.innerText = "Quitar de Vault"; bv.style.background = "var(--surface)"; bv.style.color = "var(--text-main)"; }
+            else { bv.innerText = "Añadir a Vault"; bv.style.background = "var(--accent)"; bv.style.color = "var(--accent-text)"; }
+            if (miWishlistIds.includes(cartaActiva.id)) { bw.innerText = "★ Quitar Wishlist"; bw.style.background = "#fff9c4"; bw.style.color = "#f57f17"; }
+            else { bw.innerText = "☆ Wishlist"; bw.style.background = "transparent"; bw.style.color = "var(--text-main)"; }
+        }
+
+        function toggleVault() {
+            const id = cartaActiva.id;
+            if (miVaultIds.includes(id)) miVaultIds = miVaultIds.filter(x => x !== id); else miVaultIds.push(id);
+            localStorage.setItem('miVault', JSON.stringify(miVaultIds));
+            actualizarBotonesDrawer(); pintarGaleriaSet(); // Repintar el set por si estamos viéndolo
+        }
+
+        function toggleWishlist() {
+            const id = cartaActiva.id;
+            if (miWishlistIds.includes(id)) miWishlistIds = miWishlistIds.filter(x => x !== id); else miWishlistIds.push(id);
+            localStorage.setItem('miWishlist', JSON.stringify(miWishlistIds));
+            actualizarBotonesDrawer();
+        }
+
+        async function cargarGaleriaMemoria(listaIds, contenedorId, esVault) {
+            const grid = document.getElementById(contenedorId);
+            if (listaIds.length === 0) {
+                grid.innerHTML = "<p>Vacío.</p>";
+                if(esVault){ document.getElementById('valor-total-boveda').innerText = "0.00 €"; document.getElementById('contador-cartas').innerText = "0"; }
+                return;
+            }
+            grid.innerHTML = "<p>Cargando...</p>";
+            try {
+                const query = listaIds.map(id => `id:${id}`).join(' OR ');
+                const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=${query}`);
+                const datos = await res.json();
+                let suma = 0; grid.innerHTML = "";
+                datos.data.forEach(c => { cacheCartas[c.id] = c; suma += c.cardmarket?.prices?.averageSellPrice || 0; grid.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`; });
+                if(esVault){ document.getElementById('valor-total-boveda').innerText = suma.toFixed(2) + " €"; document.getElementById('contador-cartas').innerText = datos.data.length; }
+            } catch (e) { grid.innerHTML = "Error."; }
         }
 
         async function buscarMercado() {
-            const texto = document.getElementById('buscador-input').value;
-            const resDiv = document.getElementById('resultados-mercado');
-            if(texto === "") return;
-            resDiv.innerHTML = "<p>Buscando en la base de datos...</p>";
-            const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:${texto}`);
-            const json = await res.json();
-            resDiv.innerHTML = "";
-            json.data.forEach(c => {
-                cacheCartas[c.id] = c;
-                resDiv.innerHTML += `<img src="${c.images.small}" class="carta-galeria" onclick="abrirDrawer('${c.id}')">`;
-            });
+            const t = document.getElementById('buscador-input').value; const r = document.getElementById('resultados-mercado');
+            if(t==="") return; r.innerHTML = "Buscando...";
+            const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:${t}`); const json = await res.json();
+            r.innerHTML = ""; json.data.forEach(c => { cacheCartas[c.id] = c; r.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`; });
         }
     </script>
 </body>

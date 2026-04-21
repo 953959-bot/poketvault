@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéTasador PRO Cloud V10</title>
+    <title>PokéTasador PRO Cloud V11</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --bg: #ffffff; --surface: #f9fafb; --border: #e5e7eb; --text-main: #111827; --text-muted: #6b7280; --accent: #111827; --accent-text: #ffffff; --success: #10b981; --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -11,7 +11,6 @@
         * { box-sizing: border-box; }
         body { font-family: var(--font-family); background-color: var(--bg); color: var(--text-main); margin: 0; display: flex; height: 100vh; overflow: hidden; transition: 0.3s; }
 
-        /* NAVEGACIÓN Y USUARIO */
         nav.sidebar { width: 260px; background-color: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 30px 20px; z-index: 10; }
         .logo-area { font-size: 18px; font-weight: 700; margin-bottom: 30px; display: flex; justify-content: space-between; }
         .user-profile { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
@@ -22,7 +21,6 @@
         .menu-items button.activo { background-color: var(--accent); color: var(--accent-text); }
         .btn-theme { margin-top: auto; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); padding: 10px; border-radius: 8px; font-weight: 600; }
 
-        /* PRINCIPAL Y BOTONES */
         main { flex: 1; overflow-y: auto; padding: 50px 60px; }
         .pantalla { display: none; max-width: 1200px; margin: auto; animation: fade 0.4s ease; } .pantalla.activa { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
@@ -33,7 +31,6 @@
         .btn:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
 
-        /* GRID SETS Y BARRAS DE PROGRESO */
         .grid-sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
         .set-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 25px; cursor: pointer; transition: 0.3s; text-align: center; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
         .set-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--success); }
@@ -42,14 +39,12 @@
         .progress-bar { height: 100%; background-color: var(--success); transition: width 0.5s; }
         .progress-text { font-size: 12px; color: var(--text-muted); margin-top: 5px; font-weight: 600; }
 
-        /* CARRUSEL HORIZONTAL PARA INICIO */
         .carrusel-horizontal { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 15px; scroll-snap-type: x mandatory; }
         .carrusel-horizontal .set-card { min-width: 250px; scroll-snap-align: start; flex: 0 0 auto; }
         .carrusel-horizontal .carta-wrapper { min-width: 150px; scroll-snap-align: start; flex: 0 0 auto; }
         .carrusel-horizontal::-webkit-scrollbar { height: 8px; }
         .carrusel-horizontal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-        /* GRID CARTAS Y LOTE */
         .grid-galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; margin-top: 20px; }
         .carta-wrapper { position: relative; cursor: pointer; transition: 0.2s; border-radius: 10px; }
         .carta-wrapper img { width: 100%; border-radius: 10px; display: block; border: 3px solid transparent; transition: 0.2s; }
@@ -61,7 +56,6 @@
         .marca-seleccion { display: none; position: absolute; top: 10px; right: 10px; background: var(--success); color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; z-index: 2;}
         .carta-wrapper.seleccionada .marca-seleccion { display: block; }
 
-        /* DASHBOARD, DRAWER, PERFIL */
         .dashboard-header { display: flex; gap: 20px; align-items: stretch; margin-bottom: 20px;}
         .metric-card { flex: 1; padding: 30px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; justify-content: center;}
         .metric-card p { margin: 0 0 10px 0; color: var(--text-muted); font-size: 14px; text-transform: uppercase; font-weight: 600;}
@@ -78,11 +72,9 @@
         .drawer-footer { padding: 20px 30px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; background: var(--surface); }
         .botones-compra { display: flex; gap: 10px; }
         .racha-badge { background: #ff9800; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px;}
-        
-        /* ETIQUETA HOT */
         .hot-badge { display: inline-flex; align-items: center; justify-content: center; background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; padding: 6px 12px; border-radius: 8px; font-weight: bold; font-size: 13px; margin-bottom: 20px; width: 100%; }
 
-        /* MODAL MINIJUEGO OVERLAY */
+        /* JUEGO */
         .modal-juego { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--bg); padding: 40px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); width: 90%; max-width: 800px; z-index: 1002; opacity: 0; pointer-events: none; transition: 0.3s; text-align: center; border: 1px solid var(--border); }
         .modal-juego.activo { opacity: 1; pointer-events: all; transform: translate(-50%, -50%) scale(1); }
         .vs-container { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 30px; }
@@ -91,6 +83,12 @@
         .carta-juego-precio { font-size: 24px; font-weight: bold; margin-top: 15px; color: var(--success); opacity: 0; transition: 0.5s;}
         .vs-texto { font-size: 32px; font-weight: 900; color: var(--text-muted); }
         .btn-cerrar-juego { position: absolute; top: 20px; right: 20px; background: var(--surface); border: none; font-size: 20px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; color: var(--text-muted); }
+
+        /* NUEVAS TARJETAS AFILIADOS PERFIL */
+        .afiliado-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; transition: 0.3s;}
+        .afiliado-card:hover { border-color: #ff9900; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
+        .afiliado-card h4 { margin: 0 0 10px 0; }
+        .afiliado-card p { font-size: 13px; color: var(--text-muted); margin: 0 0 15px 0;}
     </style>
 </head>
 <body>
@@ -139,9 +137,7 @@
             </div>
 
             <h3>Top 5 Cartas de tu Vault</h3>
-            <div id="inicio-top-cartas" class="carrusel-horizontal">
-                <p style="color: var(--text-muted);">Sincronizando tus mejores cartas...</p>
-            </div>
+            <div id="inicio-top-cartas" class="carrusel-horizontal"><p style="color: var(--text-muted);">Sincronizando tus mejores cartas...</p></div>
 
             <h3>Colecciones Más Avanzadas</h3>
             <div id="inicio-carrusel-colecciones" class="carrusel-horizontal"><p style="color: var(--text-muted);">Sincronizando expansiones...</p></div>
@@ -151,11 +147,46 @@
         </div>
 
         <div id="pantalla-perfil" class="pantalla">
-            <h2>Tu Perfil de Coleccionista</h2>
+            <h2>Tu Perfil y Configuración</h2>
+            
             <div id="perfil-contenido" class="dashboard-header" style="flex-wrap: wrap;">
                 <p>Inicia sesión para ver tus estadísticas de perfil.</p>
             </div>
-            <button id="btn-logout" class="btn" style="background:#d32f2f; margin-top:20px; display:none;">Cerrar Sesión Segura</button>
+
+            <h3>Apoya este proyecto</h3>
+            <div style="background: var(--surface); border: 1px solid var(--border); padding: 30px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
+                <div>
+                    <h4 style="margin:0 0 5px 0;">¿Te resulta útil PokéTasador?</h4>
+                    <p style="margin:0; color: var(--text-muted); font-size: 14px;">El mantenimiento de los servidores cuesta dinero. Si quieres ayudarme a mantener la app gratuita y sin anuncios, puedes dejar una propina.</p>
+                </div>
+                <a href="https://paypal.me/tu-usuario" target="_blank" class="btn" style="background: #0070ba; color: white;">☕ Invítame a un café</a>
+            </div>
+
+            <h3>Accesorios Recomendados</h3>
+            <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 40px;">
+                <div class="afiliado-card">
+                    <h4>Álbumes Premium</h4>
+                    <p>Protege tus cartas más valiosas con álbumes de cremallera sin anillas.</p>
+                    <a href="https://amazon.es/tu-link-afiliado-album" target="_blank" class="btn btn-outline" style="width: 100%;">Ver en Amazon</a>
+                </div>
+                <div class="afiliado-card">
+                    <h4>Fundas Perfect Size</h4>
+                    <p>Imprescindibles para el doble enfundado antes de guardarlas.</p>
+                    <a href="https://amazon.es/tu-link-afiliado-fundas" target="_blank" class="btn btn-outline" style="width: 100%;">Ver en Amazon</a>
+                </div>
+                <div class="afiliado-card">
+                    <h4>Toploaders</h4>
+                    <p>Plástico rígido para envíos y cartas en el Top 5 de tu Vault.</p>
+                    <a href="https://amazon.es/tu-link-afiliado-toploader" target="_blank" class="btn btn-outline" style="width: 100%;">Ver en Amazon</a>
+                </div>
+            </div>
+
+            <div style="background: #fdf8eb; border: 1px solid #fde68a; padding: 20px; border-radius: 12px; margin-bottom: 40px;">
+                <h4 style="margin: 0 0 10px 0; color: #b45309;">¿Eres nuevo en Cardmarket?</h4>
+                <p style="margin: 0; font-size: 14px; color: #92400e;">Apoya la app registrándote usando el código de recomendación: <strong>TU_USUARIO_AQUI</strong></p>
+            </div>
+
+            <button id="btn-logout" class="btn" style="background:#d32f2f; display:none;">Cerrar Sesión Segura</button>
         </div>
 
         <div id="pantalla-boveda" class="pantalla">
@@ -262,7 +293,6 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // TUS CLAVES
         const firebaseConfig = {
             apiKey: "AIzaSyC6kKfcphTMzfY07eL1LSb2NLpCYOYxtW8",
             authDomain: "pokevault-f03aa.firebaseapp.com",
@@ -367,9 +397,6 @@
             `;
         }
 
-        // ==========================================
-        // ANALÍTICAS, GRÁFICA Y TOP 5
-        // ==========================================
         async function procesarAnaliticasBoveda() {
             if(window.miVaultIds.length === 0) { actualizarDashboardInicio([], []); return; }
             try {
@@ -384,9 +411,7 @@
                     if(p) { totalHoy += p.avg1 || p.averageSellPrice || 0; total7d += p.avg7 || p.averageSellPrice || 0; total30d += p.avg30 || p.averageSellPrice || 0; }
                 });
 
-                // Ordenar para sacar el TOP 5
                 json.data.sort((a,b) => (b.cardmarket?.prices?.averageSellPrice || 0) - (a.cardmarket?.prices?.averageSellPrice || 0));
-
                 actualizarDashboardInicio(json.data, [total30d, total7d, totalHoy]);
             } catch(e) {}
         }
@@ -408,7 +433,6 @@
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
             });
 
-            // Pintar el TOP 5
             const divTop = document.getElementById('inicio-top-cartas');
             divTop.innerHTML = "";
             if(cartasVault.length === 0) {
@@ -445,9 +469,6 @@
             if(id === 'pantalla-inicio' && window.todosLosSets.length > 0) window.pintarCarruselesInicio();
         };
 
-        // ==========================================
-        // JUEGO, COLECCIONES Y UTILIDADES
-        // ==========================================
         let cartasParaJuego = []; let rachaJuego = 0; let cartaJuego1 = null, cartaJuego2 = null;
         window.abrirJuego = () => { document.getElementById('juego-overlay').style.opacity = '1'; document.getElementById('juego-overlay').style.pointerEvents = 'all'; document.getElementById('modal-juego').classList.add('activo'); if(cartasParaJuego.length === 0) window.cargarCartasParaJuego(); };
         window.cerrarJuego = () => { document.getElementById('juego-overlay').style.opacity = '0'; document.getElementById('juego-overlay').style.pointerEvents = 'none'; document.getElementById('modal-juego').classList.remove('activo'); };
@@ -469,41 +490,28 @@
         window.actualizarUIModoLote = () => { const btn = document.getElementById('btn-toggle-lote'); const menu = document.getElementById('acciones-lote'); if (window.modoSeleccionLote) { btn.innerText = "Cancelar"; btn.style.background = "var(--border)"; menu.style.display = "flex"; document.getElementById('contador-lote').innerText = "0 sel."; } else { btn.innerText = "Selección en Lote"; btn.style.background = "transparent"; menu.style.display = "none"; } };
         window.guardarLoteNube = async (accion) => { if (!usuarioActual) return alert("Inicia sesión."); if (window.cartasSeleccionadas.size === 0) return; const arr = Array.from(window.cartasSeleccionadas); if (accion === 'add') window.miVaultIds = [...new Set([...window.miVaultIds, ...arr])]; else window.miVaultIds = window.miVaultIds.filter(id => !arr.includes(id)); await guardarEnNube(); window.toggleModoLote(); };
 
-        // ==========================================
-        // ACTUALIZACIÓN DEL DRAWER: MÁS DETALLES Y VENDER
-        // ==========================================
         window.abrirDrawer = async (id) => {
             document.getElementById('drawer-overlay').style.opacity = '1'; document.getElementById('drawer-overlay').style.pointerEvents = 'all'; document.getElementById('side-drawer').style.right = '0';
             cartaActiva = window.cacheCartas[id]; 
             
-            // Textos básicos
             document.getElementById('drawer-img').src = cartaActiva.images.large; 
             document.getElementById('drawer-nombre').innerText = cartaActiva.name; 
-            
-            // Textos Avanzados (Set y Número)
             document.getElementById('drawer-set-detalle').innerText = cartaActiva.set.name;
             document.getElementById('drawer-numero').innerText = `${cartaActiva.number} / ${cartaActiva.set.printedTotal}`;
             document.getElementById('drawer-rareza').innerText = cartaActiva.rarity || 'Normal';
             
-            // Precio
             const p = cartaActiva.cardmarket?.prices?.averageSellPrice; 
             document.getElementById('drawer-precio').innerText = p ? p.toFixed(2) + " €" : "N/D"; 
 
-            // CÁLCULO DE CARTA "HOT" (En Tendencia)
-            // Si el precio medio de 1 día es > que el de 30 días, significa que su precio está subiendo recientemente.
             const precios = cartaActiva.cardmarket?.prices;
             const badgeHot = document.getElementById('drawer-badge-hot');
-            if(precios && precios.avg1 > precios.avg30) {
-                badgeHot.style.display = 'inline-flex';
-            } else {
-                badgeHot.style.display = 'none';
-            }
+            if(precios && precios.avg1 > precios.avg30) badgeHot.style.display = 'inline-flex';
+            else badgeHot.style.display = 'none';
             
-            // Links de Afiliado y Venta
             const queryBusqueda = encodeURIComponent(cartaActiva.name + ' ' + cartaActiva.set.name);
-            const urlEbay = `https://www.ebay.es/sch/i.html?_nkw=${queryBusqueda}&campid=5338123456`;
             
-            // Para "Vender" usamos el enlace genérico de venta de eBay pasándole el nombre del producto
+            // LA CLAVE DE LOS AFILIADOS (Cambia el campid por tu número)
+            const urlEbay = `https://www.ebay.es/sch/i.html?_nkw=${queryBusqueda}&campid=5339150600`;
             const urlVenderEbay = `https://www.ebay.es/sl/sell?target=item&productName=${queryBusqueda}`;
             
             document.getElementById('btn-comprar-cm').href = cartaActiva.cardmarket?.url || '#'; 

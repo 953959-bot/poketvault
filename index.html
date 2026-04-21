@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéTasador PRO Cloud V11</title>
+    <title>PokéTasador PRO</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --bg: #ffffff; --surface: #f9fafb; --border: #e5e7eb; --text-main: #111827; --text-muted: #6b7280; --accent: #111827; --accent-text: #ffffff; --success: #10b981; --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -11,16 +11,21 @@
         * { box-sizing: border-box; }
         body { font-family: var(--font-family); background-color: var(--bg); color: var(--text-main); margin: 0; display: flex; height: 100vh; overflow: hidden; transition: 0.3s; }
 
-        nav.sidebar { width: 260px; background-color: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 30px 20px; z-index: 10; }
-        .logo-area { font-size: 18px; font-weight: 700; margin-bottom: 30px; display: flex; justify-content: space-between; }
+        /* NAVEGACIÓN Y USUARIO */
+        nav.sidebar { width: 260px; background-color: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 30px 20px; z-index: 10; overflow-y: auto; }
+        .logo-area { font-size: 20px; font-weight: 800; margin-bottom: 30px; display: flex; align-items: center; gap: 12px; letter-spacing: -0.5px; }
         .user-profile { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
         .user-profile p { margin: 0 0 10px 0; font-size: 13px; color: var(--text-muted); }
-        .menu-items { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .menu-items { flex: 1; display: flex; flex-direction: column; gap: 4px; margin-bottom: 20px;}
         .menu-items button { background: none; border: none; color: var(--text-muted); padding: 10px 15px; text-align: left; font-size: 14px; font-weight: 500; border-radius: 8px; cursor: pointer; transition: 0.2s; }
         .menu-items button:hover { background-color: var(--surface); color: var(--text-main); }
         .menu-items button.activo { background-color: var(--accent); color: var(--accent-text); }
-        .btn-theme { margin-top: auto; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); padding: 10px; border-radius: 8px; font-weight: 600; }
+        .btn-theme { margin-top: auto; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); padding: 10px; border-radius: 8px; font-weight: 600; margin-bottom: 20px;}
 
+        /* ESPACIO ADSENSE */
+        .adsense-container { background: var(--surface); border: 1px dashed var(--border); border-radius: 8px; padding: 10px; text-align: center; font-size: 11px; color: var(--text-muted); min-height: 100px; display: flex; align-items: center; justify-content: center; margin-top: auto;}
+
+        /* PRINCIPAL */
         main { flex: 1; overflow-y: auto; padding: 50px 60px; }
         .pantalla { display: none; max-width: 1200px; margin: auto; animation: fade 0.4s ease; } .pantalla.activa { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
@@ -31,6 +36,7 @@
         .btn:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
 
+        /* GRID SETS Y CARRUSELES */
         .grid-sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
         .set-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 25px; cursor: pointer; transition: 0.3s; text-align: center; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
         .set-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--success); }
@@ -38,13 +44,13 @@
         .progress-container { width: 100%; background-color: var(--border); border-radius: 4px; height: 6px; margin-top: 15px; overflow: hidden; }
         .progress-bar { height: 100%; background-color: var(--success); transition: width 0.5s; }
         .progress-text { font-size: 12px; color: var(--text-muted); margin-top: 5px; font-weight: 600; }
-
         .carrusel-horizontal { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 15px; scroll-snap-type: x mandatory; }
         .carrusel-horizontal .set-card { min-width: 250px; scroll-snap-align: start; flex: 0 0 auto; }
         .carrusel-horizontal .carta-wrapper { min-width: 150px; scroll-snap-align: start; flex: 0 0 auto; }
         .carrusel-horizontal::-webkit-scrollbar { height: 8px; }
         .carrusel-horizontal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
+        /* GRID CARTAS Y LOTE */
         .grid-galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; margin-top: 20px; }
         .carta-wrapper { position: relative; cursor: pointer; transition: 0.2s; border-radius: 10px; }
         .carta-wrapper img { width: 100%; border-radius: 10px; display: block; border: 3px solid transparent; transition: 0.2s; }
@@ -56,6 +62,7 @@
         .marca-seleccion { display: none; position: absolute; top: 10px; right: 10px; background: var(--success); color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; z-index: 2;}
         .carta-wrapper.seleccionada .marca-seleccion { display: block; }
 
+        /* DASHBOARD, DRAWER, PERFIL */
         .dashboard-header { display: flex; gap: 20px; align-items: stretch; margin-bottom: 20px;}
         .metric-card { flex: 1; padding: 30px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; justify-content: center;}
         .metric-card p { margin: 0 0 10px 0; color: var(--text-muted); font-size: 14px; text-transform: uppercase; font-weight: 600;}
@@ -84,7 +91,6 @@
         .vs-texto { font-size: 32px; font-weight: 900; color: var(--text-muted); }
         .btn-cerrar-juego { position: absolute; top: 20px; right: 20px; background: var(--surface); border: none; font-size: 20px; width: 40px; height: 40px; border-radius: 50%; cursor: pointer; color: var(--text-muted); }
 
-        /* NUEVAS TARJETAS AFILIADOS PERFIL */
         .afiliado-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; flex: 1; display: flex; flex-direction: column; justify-content: space-between; align-items: center; text-align: center; transition: 0.3s;}
         .afiliado-card:hover { border-color: #ff9900; box-shadow: 0 5px 15px rgba(0,0,0,0.05);}
         .afiliado-card h4 { margin: 0 0 10px 0; }
@@ -94,7 +100,16 @@
 <body>
 
     <nav class="sidebar">
-        <div class="logo-area"><span>⚪ PokéTasador</span></div>
+        <div class="logo-area">
+            <svg width="32" height="32" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect x="10" y="10" width="80" height="80" rx="16" fill="var(--accent)"/>
+                <circle cx="50" cy="50" r="22" stroke="var(--success)" stroke-width="8"/>
+                <circle cx="50" cy="50" r="8" fill="var(--success)"/>
+                <path d="M10 50H28M72 50H90" stroke="var(--success)" stroke-width="8"/>
+            </svg>
+            <span>PokéTasador</span>
+        </div>
+
         <div id="user-panel" class="user-profile">
             <p id="user-text">No has iniciado sesión</p>
             <div id="badge-racha-nav" class="racha-badge" style="display:none; margin-bottom: 10px; justify-content:center;">🔥 0 Días</div>
@@ -107,7 +122,10 @@
             <button id="btn-colecciones" onclick="cambiarPantalla('pantalla-colecciones')">📚 Expansiones</button>
             <button id="btn-mercado" onclick="cambiarPantalla('pantalla-mercado')">⚲ Mercado</button>
         </div>
+        
         <button class="btn-theme" onclick="toggleTema()">◐ Cambiar Tema</button>
+
+        <div class="adsense-container">Espacio reservado para<br>Google AdSense</div>
     </nav>
 
     <main>
@@ -122,13 +140,11 @@
                 </div>
                 <div class="metric-card" style="flex: 2;">
                     <p>Evolución de Mercado</p>
-                    <div style="position: relative; height: 150px; width: 100%;">
-                        <canvas id="graficaVault"></canvas>
-                    </div>
+                    <div style="position: relative; height: 150px; width: 100%;"><canvas id="graficaVault"></canvas></div>
                 </div>
             </div>
 
-            <div style="background: linear-gradient(135deg, #111827, #374151); padding: 30px; border-radius: 15px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
+            <div style="background: linear-gradient(135deg, var(--accent), #374151); padding: 30px; border-radius: 15px; color: white; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; box-shadow: 0 10px 20px rgba(0,0,0,0.1);">
                 <div>
                     <h3 style="margin: 0 0 10px 0; border: none; padding: 0;">🎮 Cartas Clash</h3>
                     <p style="margin: 0; color: #9ca3af;">Pon a prueba tu conocimiento del mercado. ¿Qué carta es más cara?</p>
@@ -148,36 +164,33 @@
 
         <div id="pantalla-perfil" class="pantalla">
             <h2>Tu Perfil y Configuración</h2>
-            
-            <div id="perfil-contenido" class="dashboard-header" style="flex-wrap: wrap;">
-                <p>Inicia sesión para ver tus estadísticas de perfil.</p>
-            </div>
+            <div id="perfil-contenido" class="dashboard-header" style="flex-wrap: wrap;"><p>Inicia sesión para ver tus estadísticas.</p></div>
 
             <h3>Apoya este proyecto</h3>
             <div style="background: var(--surface); border: 1px solid var(--border); padding: 30px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px;">
                 <div>
                     <h4 style="margin:0 0 5px 0;">¿Te resulta útil PokéTasador?</h4>
-                    <p style="margin:0; color: var(--text-muted); font-size: 14px;">El mantenimiento de los servidores cuesta dinero. Si quieres ayudarme a mantener la app gratuita y sin anuncios, puedes dejar una propina.</p>
+                    <p style="margin:0; color: var(--text-muted); font-size: 14px;">Ayuda a mantener los servidores y la app sin anuncios intrusivos.</p>
                 </div>
-                <a href="https://paypal.me/tu-usuario" target="_blank" class="btn" style="background: #0070ba; color: white;">☕ Invítame a un café</a>
+                <a href="https://paypal.me/TU_USUARIO_PAYPAL" target="_blank" class="btn" style="background: #0070ba; color: white;">☕ Invítame a un café</a>
             </div>
 
             <h3>Accesorios Recomendados</h3>
             <div style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 40px;">
                 <div class="afiliado-card">
                     <h4>Álbumes Premium</h4>
-                    <p>Protege tus cartas más valiosas con álbumes de cremallera sin anillas.</p>
-                    <a href="https://amazon.es/tu-link-afiliado-album" target="_blank" class="btn btn-outline" style="width: 100%;">Ver en Amazon</a>
+                    <p>Protege tus cartas más valiosas con álbumes de cremallera.</p>
+                    <a href="https://amzn.to/LINK_ALBUM_AQUI" target="_blank" class="btn btn-outline" style="width: 100%;">Ver en Amazon</a>
                 </div>
                 <div class="afiliado-card">
                     <h4>Fundas Perfect Size</h4>
                     <p>Imprescindibles para el doble enfundado antes de guardarlas.</p>
-                    <a href="https://amazon.es/tu-link-afiliado-fundas" target="_blank" class="btn btn-outline" style="width: 100%;">Ver en Amazon</a>
+                    <a href="https://amzn.to/LINK_FUNDAS_AQUI" target="_blank" class="btn btn-outline" style="width: 100%;">Ver en Amazon</a>
                 </div>
                 <div class="afiliado-card">
                     <h4>Toploaders</h4>
                     <p>Plástico rígido para envíos y cartas en el Top 5 de tu Vault.</p>
-                    <a href="https://amazon.es/tu-link-afiliado-toploader" target="_blank" class="btn btn-outline" style="width: 100%;">Ver en Amazon</a>
+                    <a href="https://amzn.to/LINK_TOPLOADER_AQUI" target="_blank" class="btn btn-outline" style="width: 100%;">Ver en Amazon</a>
                 </div>
             </div>
 
@@ -189,10 +202,7 @@
             <button id="btn-logout" class="btn" style="background:#d32f2f; display:none;">Cerrar Sesión Segura</button>
         </div>
 
-        <div id="pantalla-boveda" class="pantalla">
-            <h2>Vault</h2>
-            <div id="grid-boveda" class="grid-galeria"></div>
-        </div>
+        <div id="pantalla-boveda" class="pantalla"><h2>Vault</h2><div id="grid-boveda" class="grid-galeria"></div></div>
 
         <div id="pantalla-colecciones" class="pantalla">
             <h2>Catálogo de Expansiones</h2>
@@ -293,6 +303,7 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+        // CONFIGURACIÓN DE FIREBASE (NO TOCAR)
         const firebaseConfig = {
             apiKey: "AIzaSyC6kKfcphTMzfY07eL1LSb2NLpCYOYxtW8",
             authDomain: "pokevault-f03aa.firebaseapp.com",
@@ -379,8 +390,7 @@
 
         function pintarPantallaPerfil() {
             if(!usuarioActual) return;
-            const contenedor = document.getElementById('perfil-contenido');
-            contenedor.innerHTML = `
+            document.getElementById('perfil-contenido').innerHTML = `
                 <div class="metric-card" style="min-width: 200px; text-align:center;">
                     <img src="${usuarioActual.photoURL}" style="width:80px; border-radius:50%; margin:0 auto 15px auto;">
                     <h3>${usuarioActual.displayName}</h3>
@@ -393,8 +403,7 @@
                 <div class="metric-card" style="min-width: 200px;">
                     <p>Total Cartas</p>
                     <h3>${window.miVaultIds.length}</h3>
-                </div>
-            `;
+                </div>`;
         }
 
         async function procesarAnaliticasBoveda() {
@@ -438,8 +447,7 @@
             if(cartasVault.length === 0) {
                 divTop.innerHTML = "<p style='color:var(--text-muted);'>Guarda cartas en tu Vault para ver tu Top 5.</p>";
             } else {
-                const top5 = cartasVault.slice(0, 5);
-                top5.forEach(c => {
+                cartasVault.slice(0, 5).forEach(c => {
                     divTop.innerHTML += `
                         <div class="carta-wrapper" onclick="abrirDrawer('${c.id}')">
                             <img src="${c.images.small}">
@@ -469,6 +477,7 @@
             if(id === 'pantalla-inicio' && window.todosLosSets.length > 0) window.pintarCarruselesInicio();
         };
 
+        // LÓGICA DE MINIJUEGO
         let cartasParaJuego = []; let rachaJuego = 0; let cartaJuego1 = null, cartaJuego2 = null;
         window.abrirJuego = () => { document.getElementById('juego-overlay').style.opacity = '1'; document.getElementById('juego-overlay').style.pointerEvents = 'all'; document.getElementById('modal-juego').classList.add('activo'); if(cartasParaJuego.length === 0) window.cargarCartasParaJuego(); };
         window.cerrarJuego = () => { document.getElementById('juego-overlay').style.opacity = '0'; document.getElementById('juego-overlay').style.pointerEvents = 'none'; document.getElementById('modal-juego').classList.remove('activo'); };
@@ -476,6 +485,7 @@
         window.iniciarRondaJuego = () => { if(cartasParaJuego.length < 2) { window.cargarCartasParaJuego(); return; } const tab = document.getElementById('juego-tablero'); document.getElementById('btn-siguiente-ronda').style.display = 'none'; cartaJuego1 = cartasParaJuego.splice(Math.floor(Math.random() * cartasParaJuego.length), 1)[0]; cartaJuego2 = cartasParaJuego.splice(Math.floor(Math.random() * cartasParaJuego.length), 1)[0]; tab.innerHTML = `<div><img src="${cartaJuego1.images.large}" class="carta-juego" id="img-juego-1" onclick="resolverJuego(1)"><div class="carta-juego-precio" id="precio-juego-1">${cartaJuego1.cardmarket.prices.averageSellPrice.toFixed(2)} €</div></div><div class="vs-texto">VS</div><div><img src="${cartaJuego2.images.large}" class="carta-juego" id="img-juego-2" onclick="resolverJuego(2)"><div class="carta-juego-precio" id="precio-juego-2">${cartaJuego2.cardmarket.prices.averageSellPrice.toFixed(2)} €</div></div>`; };
         window.resolverJuego = (el) => { document.getElementById('img-juego-1').onclick=null; document.getElementById('img-juego-2').onclick=null; document.getElementById('precio-juego-1').style.opacity='1'; document.getElementById('precio-juego-2').style.opacity='1'; const p1 = cartaJuego1.cardmarket.prices.averageSellPrice; const p2 = cartaJuego2.cardmarket.prices.averageSellPrice; let ok = false; if(el===1 && p1>=p2) ok=true; if(el===2 && p2>=p1) ok=true; const div = document.getElementById(`img-juego-${el}`); if(ok) { div.style.border = "4px solid var(--success)"; rachaJuego++; } else { div.style.border = "4px solid #d32f2f"; rachaJuego = 0; } document.getElementById('juego-puntuacion').innerText = rachaJuego; document.getElementById('btn-siguiente-ronda').style.display = 'inline-block'; };
 
+        // LÓGICA DE COLECCIONES
         window.descargarSetsMaster = async () => { if (window.todosLosSets.length > 0) return; try { const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=150'); const json = await res.json(); window.todosLosSets = json.data; window.filtrarYPaginarSets(); window.pintarCarruselesInicio(); } catch (e) {} };
         function calcularProgresoSet(setId, totalCartasSet) { const obt = window.miVaultIds.filter(id => id.startsWith(setId + '-')).length; const porc = totalCartasSet > 0 ? ((obt / totalCartasSet) * 100) : 0; return { obtenidas: obt, porcentaje: porc }; }
         window.pintarCarruselesInicio = () => { const divNot = document.getElementById('inicio-carrusel-noticias'); divNot.innerHTML = ""; window.todosLosSets.slice(0, 5).forEach(s => { divNot.innerHTML += `<div class="set-card" onclick="abrirSet('${s.id}', '${s.name}')"><span style="position:absolute; top:10px; right:10px; background:var(--accent); color:var(--accent-text); padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold;">NUEVO</span><img src="${s.images.logo}"><strong>${s.name}</strong></div>`; }); const divAva = document.getElementById('inicio-carrusel-colecciones'); divAva.innerHTML = ""; let setsP = window.todosLosSets.map(s => ({ ...s, meta: calcularProgresoSet(s.id, s.printedTotal) })).filter(s => s.meta.porcentaje > 0).sort((a,b) => b.meta.porcentaje - a.meta.porcentaje); if(setsP.length === 0) divAva.innerHTML = "<p style='color:var(--text-muted);'>Añade cartas al Vault para ver tu progreso.</p>"; else setsP.slice(0, 5).forEach(s => { const p = s.meta; divAva.innerHTML += `<div class="set-card" onclick="abrirSet('${s.id}', '${s.name}')"><img src="${s.images.logo}"><strong>${s.name}</strong><div class="progress-container"><div class="progress-bar" style="width: ${p.porcentaje}%;"></div></div><div class="progress-text">${p.obtenidas}/${s.printedTotal}</div></div>`; }); };
@@ -490,6 +500,7 @@
         window.actualizarUIModoLote = () => { const btn = document.getElementById('btn-toggle-lote'); const menu = document.getElementById('acciones-lote'); if (window.modoSeleccionLote) { btn.innerText = "Cancelar"; btn.style.background = "var(--border)"; menu.style.display = "flex"; document.getElementById('contador-lote').innerText = "0 sel."; } else { btn.innerText = "Selección en Lote"; btn.style.background = "transparent"; menu.style.display = "none"; } };
         window.guardarLoteNube = async (accion) => { if (!usuarioActual) return alert("Inicia sesión."); if (window.cartasSeleccionadas.size === 0) return; const arr = Array.from(window.cartasSeleccionadas); if (accion === 'add') window.miVaultIds = [...new Set([...window.miVaultIds, ...arr])]; else window.miVaultIds = window.miVaultIds.filter(id => !arr.includes(id)); await guardarEnNube(); window.toggleModoLote(); };
 
+        // DRAWER Y ENLACES
         window.abrirDrawer = async (id) => {
             document.getElementById('drawer-overlay').style.opacity = '1'; document.getElementById('drawer-overlay').style.pointerEvents = 'all'; document.getElementById('side-drawer').style.right = '0';
             cartaActiva = window.cacheCartas[id]; 
@@ -510,8 +521,7 @@
             
             const queryBusqueda = encodeURIComponent(cartaActiva.name + ' ' + cartaActiva.set.name);
             
-            // LA CLAVE DE LOS AFILIADOS (Cambia el campid por tu número)
-            const urlEbay = `https://www.ebay.es/sch/i.html?_nkw=${queryBusqueda}&campid=5339150600`;
+            const urlEbay = `https://www.ebay.es/sch/i.html?_nkw=${queryBusqueda}&campid=TU_NUMERO_AQUI`;
             const urlVenderEbay = `https://www.ebay.es/sl/sell?target=item&productName=${queryBusqueda}`;
             
             document.getElementById('btn-comprar-cm').href = cartaActiva.cardmarket?.url || '#'; 

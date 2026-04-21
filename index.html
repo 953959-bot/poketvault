@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéTasador PRO Cloud V7</title>
+    <title>PokéTasador PRO Cloud V8</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --bg: #ffffff; --surface: #f9fafb; --border: #e5e7eb; --text-main: #111827; --text-muted: #6b7280; --accent: #111827; --accent-text: #ffffff; --success: #10b981; --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -16,8 +16,8 @@
         .logo-area { font-size: 18px; font-weight: 700; margin-bottom: 30px; display: flex; justify-content: space-between; }
         .user-profile { background: var(--surface); border: 1px solid var(--border); padding: 15px; border-radius: 10px; margin-bottom: 20px; text-align: center; }
         .user-profile p { margin: 0 0 10px 0; font-size: 13px; color: var(--text-muted); }
-        .menu-items { flex: 1; display: flex; flex-direction: column; gap: 8px; }
-        .menu-items button { background: none; border: none; color: var(--text-muted); padding: 12px 15px; text-align: left; font-size: 15px; font-weight: 500; border-radius: 8px; cursor: pointer; transition: 0.2s; }
+        .menu-items { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+        .menu-items button { background: none; border: none; color: var(--text-muted); padding: 10px 15px; text-align: left; font-size: 14px; font-weight: 500; border-radius: 8px; cursor: pointer; transition: 0.2s; }
         .menu-items button:hover { background-color: var(--surface); color: var(--text-main); }
         .menu-items button.activo { background-color: var(--accent); color: var(--accent-text); }
         .btn-theme { margin-top: auto; cursor: pointer; border: 1px solid var(--border); background: var(--surface); color: var(--text-main); padding: 10px; border-radius: 8px; font-weight: 600; }
@@ -60,11 +60,12 @@
         .marca-seleccion { display: none; position: absolute; top: 10px; right: 10px; background: var(--success); color: white; border-radius: 50%; width: 24px; height: 24px; text-align: center; line-height: 24px; font-weight: bold; z-index: 2;}
         .carta-wrapper.seleccionada .marca-seleccion { display: block; }
 
-        /* DASHBOARD Y DRAWER */
-        .dashboard-header { display: flex; gap: 20px; align-items: stretch; }
+        /* DASHBOARD, DRAWER, PERFIL Y JUEGO */
+        .dashboard-header { display: flex; gap: 20px; align-items: stretch; margin-bottom: 20px;}
         .metric-card { flex: 1; padding: 30px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; justify-content: center;}
         .metric-card p { margin: 0 0 10px 0; color: var(--text-muted); font-size: 14px; text-transform: uppercase; font-weight: 600;}
-        .metric-card h3 { margin: 0; font-size: 48px; font-weight: 300; }
+        .metric-card h3 { margin: 0; font-size: 40px; font-weight: 300; }
+        
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000; }
         .drawer { position: fixed; top: 0; right: -450px; width: 450px; height: 100vh; background: var(--bg); border-left: 1px solid var(--border); transition: right 0.4s; z-index: 1001; display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.1);}
         .drawer-header { padding: 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
@@ -75,6 +76,14 @@
         .info-value { font-weight: 600; text-align: right;}
         .drawer-footer { padding: 20px 30px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; background: var(--surface); }
         .botones-compra { display: flex; gap: 10px; }
+
+        /* ESTILOS DEL MINIJUEGO */
+        .vs-container { display: flex; justify-content: center; align-items: center; gap: 40px; margin-top: 40px; }
+        .carta-juego { width: 250px; border-radius: 15px; cursor: pointer; transition: 0.3s; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+        .carta-juego:hover { transform: scale(1.05); }
+        .carta-juego-precio { text-align: center; font-size: 24px; font-weight: bold; margin-top: 15px; color: var(--success); opacity: 0; transition: 0.5s;}
+        .vs-texto { font-size: 32px; font-weight: 900; color: var(--text-muted); }
+        .racha-badge { background: #ff9800; color: white; padding: 5px 10px; border-radius: 20px; font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 5px;}
     </style>
 </head>
 <body>
@@ -83,14 +92,16 @@
         <div class="logo-area"><span>⚪ PokéTasador</span></div>
         <div id="user-panel" class="user-profile">
             <p id="user-text">No has iniciado sesión</p>
+            <div id="badge-racha-nav" class="racha-badge" style="display:none; margin-bottom: 10px; justify-content:center;">🔥 0 Días</div>
             <button id="btn-login" class="btn" style="width: 100%; font-size: 13px;">Iniciar con Google</button>
-            <button id="btn-logout" class="btn" style="width: 100%; background:#d32f2f; font-size: 13px; display:none;">Cerrar Sesión</button>
         </div>
         <div class="menu-items">
             <button id="btn-inicio" class="activo" onclick="cambiarPantalla('pantalla-inicio')">✦ Panel Inicio</button>
+            <button id="btn-perfil" onclick="cambiarPantalla('pantalla-perfil')">👤 Mi Perfil</button>
             <button id="btn-boveda" onclick="cambiarPantalla('pantalla-boveda')">◒ The Vault</button>
             <button id="btn-colecciones" onclick="cambiarPantalla('pantalla-colecciones')">📚 Expansiones</button>
             <button id="btn-mercado" onclick="cambiarPantalla('pantalla-mercado')">⚲ Mercado</button>
+            <button id="btn-juego" onclick="cambiarPantalla('pantalla-juego')" style="color: #ff9800; font-weight:bold;">🎮 Cartas Clash</button>
         </div>
         <button class="btn-theme" onclick="toggleTema()">◐ Cambiar Tema</button>
     </nav>
@@ -105,21 +116,27 @@
                     <h3 id="inicio-valor-total" style="color: var(--success);">0.00 €</h3>
                     <p id="inicio-contador-cartas" style="margin-top: 10px; text-transform: none;">0 cartas aseguradas</p>
                 </div>
-                <div class="metric-card" style="flex: 2; position: relative;">
-                    <p>Evolución de Mercado (Últimos 30 días)</p>
-                    <canvas id="graficaVault"></canvas>
+                <div class="metric-card" style="flex: 2;">
+                    <p>Evolución de Mercado</p>
+                    <div style="position: relative; height: 150px; width: 100%;">
+                        <canvas id="graficaVault"></canvas>
+                    </div>
                 </div>
             </div>
 
             <h3>Colecciones Más Avanzadas</h3>
-            <div id="inicio-carrusel-colecciones" class="carrusel-horizontal">
-                <p style="color: var(--text-muted);">Sincronizando expansiones...</p>
-            </div>
+            <div id="inicio-carrusel-colecciones" class="carrusel-horizontal"><p style="color: var(--text-muted);">Sincronizando expansiones...</p></div>
 
-            <h3>Últimos Lanzamientos (Noticias)</h3>
-            <div id="inicio-carrusel-noticias" class="carrusel-horizontal">
-                <p style="color: var(--text-muted);">Cargando novedades...</p>
+            <h3>Últimos Lanzamientos</h3>
+            <div id="inicio-carrusel-noticias" class="carrusel-horizontal"><p style="color: var(--text-muted);">Cargando novedades...</p></div>
+        </div>
+
+        <div id="pantalla-perfil" class="pantalla">
+            <h2>Tu Perfil de Coleccionista</h2>
+            <div id="perfil-contenido" class="dashboard-header" style="flex-wrap: wrap;">
+                <p>Inicia sesión para ver tus estadísticas de perfil.</p>
             </div>
+            <button id="btn-logout" class="btn" style="background:#d32f2f; margin-top:20px; display:none;">Cerrar Sesión Segura</button>
         </div>
 
         <div id="pantalla-boveda" class="pantalla">
@@ -180,6 +197,20 @@
             </div>
             <div id="resultados-mercado" class="grid-galeria"></div>
         </div>
+
+        <div id="pantalla-juego" class="pantalla" style="text-align: center;">
+            <h2>🎮 Cartas Clash</h2>
+            <p style="color: var(--text-muted);">¿Cuál de estas dos cartas tiene un precio mayor en Cardmarket?</p>
+            
+            <div id="juego-tablero" class="vs-container">
+                <p>Cargando cartas del mercado...</p>
+            </div>
+
+            <div style="margin-top: 40px; font-size: 20px;">
+                Racha actual: <strong id="juego-puntuacion" style="color: var(--success);">0</strong> aciertos
+            </div>
+            <button id="btn-siguiente-ronda" class="btn" style="margin-top:20px; display:none;" onclick="iniciarRondaJuego()">Siguiente Ronda</button>
+        </div>
     </main>
 
     <div class="drawer-overlay" id="drawer-overlay" onclick="cerrarDrawer()"></div>
@@ -207,7 +238,7 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // 🚨 TUS CLAVES DE FIREBASE 🚨
+        // TUS CLAVES INTACTAS
         const firebaseConfig = {
             apiKey: "AIzaSyC6kKfcphTMzfY07eL1LSb2NLpCYOYxtW8",
             authDomain: "pokevault-f03aa.firebaseapp.com",
@@ -224,24 +255,18 @@
 
         window.miVaultIds = []; 
         let usuarioActual = null;
+        let datosPerfil = { racha: 0, ultimoLogin: "" }; // Datos nuevos del usuario
         window.cacheCartas = {};
         let cartaActiva = null;
 
-        // Variables de Paginación y Sets
-        window.todosLosSets = []; 
-        window.setsFiltrados = []; 
-        window.paginaActualSets = 1;
-        const SETS_POR_PAGINA = 15;
-        window.cartasSetActual = [];
-        window.modoSeleccionLote = false;
-        window.cartasSeleccionadas = new Set();
-        
-        // Gráfica Global
+        // Paginación y Gráfica
+        window.todosLosSets = []; window.setsFiltrados = []; window.paginaActualSets = 1; const SETS_POR_PAGINA = 15;
+        window.cartasSetActual = []; window.modoSeleccionLote = false; window.cartasSeleccionadas = new Set();
         let miGrafica = null;
 
         window.onload = () => { 
             if(localStorage.getItem('tema') === 'dark') document.body.classList.add('dark-mode'); 
-            window.descargarSetsMaster(); // Bajamos los sets al arrancar para rellenar el inicio
+            window.descargarSetsMaster(); 
         };
         window.toggleTema = () => { document.body.classList.toggle('dark-mode'); localStorage.setItem('tema', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); };
 
@@ -249,103 +274,122 @@
             const btnLogin = document.getElementById('btn-login');
             const btnLogout = document.getElementById('btn-logout');
             const userText = document.getElementById('user-text');
+            const badgeNav = document.getElementById('badge-racha-nav');
+
             if (user) {
                 usuarioActual = user;
                 userText.innerHTML = `Hola, <strong>${user.displayName}</strong>`;
-                btnLogin.style.display = 'none'; btnLogout.style.display = 'block';
-                await sincronizarBovedaDesdeNube();
+                btnLogin.style.display = 'none'; 
+                btnLogout.style.display = 'block';
+                await sincronizarBovedaYPerfil();
+                badgeNav.style.display = 'inline-flex';
+                badgeNav.innerHTML = `🔥 ${datosPerfil.racha} Días`;
+                pintarPantallaPerfil();
             } else {
-                usuarioActual = null; window.miVaultIds = []; 
+                usuarioActual = null; window.miVaultIds = []; datosPerfil = {racha:0};
                 userText.innerHTML = "No has iniciado sesión";
-                btnLogin.style.display = 'block'; btnLogout.style.display = 'none';
-                actualizarDashboardInicio([], []); // Reset dashboard
+                btnLogin.style.display = 'block'; 
+                btnLogout.style.display = 'none';
+                badgeNav.style.display = 'none';
+                actualizarDashboardInicio([], []); 
+                document.getElementById('perfil-contenido').innerHTML = "<p>Inicia sesión con Google para ver tus estadísticas.</p>";
             }
         });
 
         document.getElementById('btn-login').addEventListener('click', () => signInWithPopup(auth, provider));
         document.getElementById('btn-logout').addEventListener('click', () => { signOut(auth); window.cambiarPantalla('pantalla-inicio'); });
 
-        async function sincronizarBovedaDesdeNube() {
+        // ==========================================
+        // SINCRONIZACIÓN Y RACHAS DE LOGIN
+        // ==========================================
+        async function sincronizarBovedaYPerfil() {
             if (!usuarioActual) return;
-            const docSnap = await getDoc(doc(db, "usuarios", usuarioActual.uid));
-            if (docSnap.exists()) window.miVaultIds = docSnap.data().cartasGuardadas || [];
-            else { await setDoc(doc(db, "usuarios", usuarioActual.uid), { cartasGuardadas: [] }); window.miVaultIds = []; }
+            const docRef = doc(db, "usuarios", usuarioActual.uid);
+            const docSnap = await getDoc(docRef);
             
-            // Calculamos la gráfica y el total al entrar
+            const hoy = new Date().toDateString();
+            
+            if (docSnap.exists()) {
+                const data = docSnap.data();
+                window.miVaultIds = data.cartasGuardadas || [];
+                datosPerfil.racha = data.racha || 0;
+                datosPerfil.ultimoLogin = data.ultimoLogin || "";
+                
+                // Lógica de Racha
+                if (datosPerfil.ultimoLogin !== hoy) {
+                    const ayer = new Date(); ayer.setDate(ayer.getDate() - 1);
+                    if (datosPerfil.ultimoLogin === ayer.toDateString()) datosPerfil.racha += 1;
+                    else datosPerfil.racha = 1; // Resetea si no entró ayer
+                    datosPerfil.ultimoLogin = hoy;
+                    await setDoc(docRef, { racha: datosPerfil.racha, ultimoLogin: hoy }, { merge: true });
+                }
+            } else {
+                window.miVaultIds = [];
+                datosPerfil.racha = 1; datosPerfil.ultimoLogin = hoy;
+                await setDoc(docRef, { cartasGuardadas: [], racha: 1, ultimoLogin: hoy });
+            }
             procesarAnaliticasBoveda();
         }
 
+        function pintarPantallaPerfil() {
+            if(!usuarioActual) return;
+            const contenedor = document.getElementById('perfil-contenido');
+            contenedor.innerHTML = `
+                <div class="metric-card" style="min-width: 200px; text-align:center;">
+                    <img src="${usuarioActual.photoURL}" style="width:80px; border-radius:50%; margin:0 auto 15px auto;">
+                    <h3>${usuarioActual.displayName}</h3>
+                    <p style="text-transform:none;">Coleccionista</p>
+                </div>
+                <div class="metric-card" style="min-width: 200px;">
+                    <p>Racha Activa</p>
+                    <h3 style="color: #ff9800;">🔥 ${datosPerfil.racha} Días</h3>
+                </div>
+                <div class="metric-card" style="min-width: 200px;">
+                    <p>Total Cartas</p>
+                    <h3>${window.miVaultIds.length}</h3>
+                </div>
+            `;
+        }
+
         async function procesarAnaliticasBoveda() {
-            if(window.miVaultIds.length === 0) {
-                actualizarDashboardInicio([], []);
-                return;
-            }
+            if(window.miVaultIds.length === 0) { actualizarDashboardInicio([], []); return; }
             try {
-                // Truco de la API: pedir todo el vault de golpe
                 const query = window.miVaultIds.map(id => `id:${id}`).join(' OR ');
                 const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=${query}`);
                 const json = await res.json();
-                
-                // Extraer el precio global sumando (1 día, 7 días, 30 días)
                 let totalHoy = 0, total7d = 0, total30d = 0;
-                
                 json.data.forEach(c => {
-                    window.cacheCartas[c.id] = c; // Alimentar caché global
-                    const precios = c.cardmarket?.prices;
-                    if(precios) {
-                        totalHoy += precios.avg1 || precios.averageSellPrice || 0;
-                        total7d += precios.avg7 || precios.averageSellPrice || 0;
-                        total30d += precios.avg30 || precios.averageSellPrice || 0;
-                    }
+                    window.cacheCartas[c.id] = c; 
+                    const p = c.cardmarket?.prices;
+                    if(p) { totalHoy += p.avg1 || p.averageSellPrice || 0; total7d += p.avg7 || p.averageSellPrice || 0; total30d += p.avg30 || p.averageSellPrice || 0; }
                 });
-
                 actualizarDashboardInicio(json.data, [total30d, total7d, totalHoy]);
-
-            } catch(e) { console.error("Error analíticas", e); }
+            } catch(e) { console.error(e); }
         }
 
         function actualizarDashboardInicio(cartasVault, datosGrafica) {
-            // Textos
             const total = datosGrafica.length > 0 ? datosGrafica[2] : 0;
             document.getElementById('inicio-valor-total').innerText = total.toFixed(2) + " €";
             document.getElementById('inicio-contador-cartas').innerText = `${cartasVault.length} cartas aseguradas`;
 
-            // Gráfica
             const ctx = document.getElementById('graficaVault').getContext('2d');
-            if(miGrafica) miGrafica.destroy(); // Borrar gráfica vieja
-            
+            if(miGrafica) miGrafica.destroy();
             const colorLinea = document.body.classList.contains('dark-mode') ? '#10b981' : '#111827';
-            
             miGrafica = new Chart(ctx, {
                 type: 'line',
                 data: {
-                    labels: ['Hace 30 días', 'Hace 7 días', 'Hoy'],
-                    datasets: [{
-                        label: 'Valor de Bóveda (€)',
-                        data: datosGrafica.length > 0 ? datosGrafica : [0,0,0],
-                        borderColor: colorLinea,
-                        backgroundColor: colorLinea + '33', // Translúcido
-                        borderWidth: 3,
-                        tension: 0.3,
-                        fill: true
-                    }]
+                    labels: ['Hace 30d', 'Hace 7d', 'Hoy'],
+                    datasets: [{ label: 'Valor (€)', data: datosGrafica.length > 0 ? datosGrafica : [0,0,0], borderColor: colorLinea, backgroundColor: colorLinea + '33', borderWidth: 3, tension: 0.3, fill: true }]
                 },
-                options: {
-                    responsive: true, maintainAspectRatio: false,
-                    plugins: { legend: { display: false } },
-                    scales: { y: { beginAtZero: false } }
-                }
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: false } } }
             });
-
-            // Actualizar el carrusel si ya tenemos los sets descargados
             if(window.todosLosSets.length > 0) pintarCarruselesInicio();
         }
 
         async function guardarEnNube() {
             if (!usuarioActual) { alert("Inicia sesión primero."); return false; }
             await setDoc(doc(db, "usuarios", usuarioActual.uid), { cartasGuardadas: window.miVaultIds }, { merge: true });
-            procesarAnaliticasBoveda(); // Recalcular gráfica al guardar o borrar algo
-            return true;
+            procesarAnaliticasBoveda(); pintarPantallaPerfil(); return true;
         }
 
         window.cambiarPantalla = (id) => {
@@ -356,22 +400,99 @@
             if(btnMenu) btnMenu.classList.add('activo');
 
             if(id === 'pantalla-boveda') window.cargarBovedaGrid();
-            if(id === 'pantalla-colecciones') window.filtrarYPaginarSets(); // Actualizar barras
-            if(id === 'pantalla-inicio' && window.todosLosSets.length > 0) window.pintarCarruselesInicio(); // Actualizar carruseles
+            if(id === 'pantalla-colecciones') window.filtrarYPaginarSets();
+            if(id === 'pantalla-inicio' && window.todosLosSets.length > 0) window.pintarCarruselesInicio();
+            if(id === 'pantalla-juego') window.iniciarMotorJuego();
         };
 
-        // ==============================================
-        // LÓGICA DE COLECCIONES Y CARRUSELES DE INICIO
-        // ==============================================
+        // ==========================================
+        // MINIJUEGO: CARTAS CLASH
+        // ==========================================
+        let cartasParaJuego = [];
+        let rachaJuego = 0;
+        let cartaJuego1 = null, cartaJuego2 = null;
+
+        window.iniciarMotorJuego = async () => {
+            const tablero = document.getElementById('juego-tablero');
+            if(cartasParaJuego.length === 0) {
+                tablero.innerHTML = "<p>Descargando las cartas más populares del mercado para el juego...</p>";
+                try {
+                    // Descargamos cartas famosas (Base Set, 151, etc.) que tengan precio
+                    const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:base1 OR set.id:sv3pt5&pageSize=100`);
+                    const json = await res.json();
+                    cartasParaJuego = json.data.filter(c => c.cardmarket?.prices?.averageSellPrice > 0);
+                    window.iniciarRondaJuego();
+                } catch(e) { tablero.innerHTML = "Error al cargar el juego."; }
+            } else {
+                window.iniciarRondaJuego();
+            }
+        };
+
+        window.iniciarRondaJuego = () => {
+            const tablero = document.getElementById('juego-tablero');
+            document.getElementById('btn-siguiente-ronda').style.display = 'none';
+            
+            // Elegir 2 cartas aleatorias distintas
+            cartaJuego1 = cartasParaJuego[Math.floor(Math.random() * cartasParaJuego.length)];
+            cartaJuego2 = cartasParaJuego[Math.floor(Math.random() * cartasParaJuego.length)];
+            while(cartaJuego1.id === cartaJuego2.id) {
+                cartaJuego2 = cartasParaJuego[Math.floor(Math.random() * cartasParaJuego.length)];
+            }
+
+            tablero.innerHTML = `
+                <div>
+                    <img src="${cartaJuego1.images.large}" class="carta-juego" id="img-juego-1" onclick="resolverJuego(1)">
+                    <div class="carta-juego-precio" id="precio-juego-1">${cartaJuego1.cardmarket.prices.averageSellPrice.toFixed(2)} €</div>
+                </div>
+                <div class="vs-texto">VS</div>
+                <div>
+                    <img src="${cartaJuego2.images.large}" class="carta-juego" id="img-juego-2" onclick="resolverJuego(2)">
+                    <div class="carta-juego-precio" id="precio-juego-2">${cartaJuego2.cardmarket.prices.averageSellPrice.toFixed(2)} €</div>
+                </div>
+            `;
+        };
+
+        window.resolverJuego = (eleccion) => {
+            // Impedir múltiples clicks
+            document.getElementById('img-juego-1').onclick = null;
+            document.getElementById('img-juego-2').onclick = null;
+            
+            // Mostrar precios
+            document.getElementById('precio-juego-1').style.opacity = '1';
+            document.getElementById('precio-juego-2').style.opacity = '1';
+
+            const precio1 = cartaJuego1.cardmarket.prices.averageSellPrice;
+            const precio2 = cartaJuego2.cardmarket.prices.averageSellPrice;
+            
+            let esCorrecto = false;
+            if(eleccion === 1 && precio1 >= precio2) esCorrecto = true;
+            if(eleccion === 2 && precio2 >= precio1) esCorrecto = true;
+
+            const divElegido = document.getElementById(`img-juego-${eleccion}`);
+            
+            if(esCorrecto) {
+                divElegido.style.border = "5px solid var(--success)";
+                rachaJuego++;
+            } else {
+                divElegido.style.border = "5px solid #d32f2f";
+                rachaJuego = 0; // Pierdes la racha
+            }
+            
+            document.getElementById('juego-puntuacion').innerText = rachaJuego;
+            document.getElementById('btn-siguiente-ronda').style.display = 'inline-block';
+        };
+
+        // ==========================================
+        // RESTO DE FUNCIONES (Paginador, Drawer, Colecciones...)
+        // ==========================================
         window.descargarSetsMaster = async () => {
             if (window.todosLosSets.length > 0) return; 
             try {
                 const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=150');
                 const json = await res.json();
                 window.todosLosSets = json.data;
-                window.filtrarYPaginarSets(); 
-                window.pintarCarruselesInicio();
-            } catch (e) { console.error("Error al cargar expansiones"); }
+                window.filtrarYPaginarSets(); window.pintarCarruselesInicio();
+            } catch (e) {}
         };
 
         function calcularProgresoSet(setId, totalCartasSet) {
@@ -381,229 +502,78 @@
         }
 
         window.pintarCarruselesInicio = () => {
-            // 1. Carrusel de Noticias (Últimos 5 sets)
-            const divNoticias = document.getElementById('inicio-carrusel-noticias');
-            divNoticias.innerHTML = "";
-            // Los primeros 5 ya vienen ordenados por fecha de la API
-            window.todosLosSets.slice(0, 5).forEach(set => {
-                divNoticias.innerHTML += `
-                    <div class="set-card" onclick="abrirSet('${set.id}', '${set.name}')">
-                        <span style="position:absolute; top:10px; right:10px; background:var(--accent); color:var(--accent-text); padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold;">NUEVO</span>
-                        <img src="${set.images.logo}">
-                        <strong>${set.name}</strong>
-                    </div>`;
+            const divNoticias = document.getElementById('inicio-carrusel-noticias'); divNoticias.innerHTML = "";
+            window.todosLosSets.slice(0, 5).forEach(s => {
+                divNoticias.innerHTML += `<div class="set-card" onclick="abrirSet('${s.id}', '${s.name}')"><span style="position:absolute; top:10px; right:10px; background:var(--accent); color:var(--accent-text); padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold;">NUEVO</span><img src="${s.images.logo}"><strong>${s.name}</strong></div>`;
             });
-
-            // 2. Carrusel de Colecciones Más Avanzadas
-            const divAvanzadas = document.getElementById('inicio-carrusel-colecciones');
-            divAvanzadas.innerHTML = "";
-            
-            // Calculamos progresos y ordenamos
-            let setsConProgreso = window.todosLosSets.map(set => ({ ...set, meta: calcularProgresoSet(set.id, set.printedTotal) }));
-            setsConProgreso = setsConProgreso.filter(s => s.meta.porcentaje > 0); // Solo las empezadas
-            setsConProgreso.sort((a,b) => b.meta.porcentaje - a.meta.porcentaje); // Mayor a menor
-
-            if(setsConProgreso.length === 0) {
-                divAvanzadas.innerHTML = "<p style='color:var(--text-muted);'>Empieza a guardar cartas en The Vault para ver tu progreso aquí.</p>";
-            } else {
-                setsConProgreso.slice(0, 5).forEach(set => {
-                    const p = set.meta;
-                    divAvanzadas.innerHTML += `
-                    <div class="set-card" onclick="abrirSet('${set.id}', '${set.name}')">
-                        <img src="${set.images.logo}">
-                        <strong>${set.name}</strong>
-                        <div class="progress-container"><div class="progress-bar" style="width: ${p.porcentaje}%;"></div></div>
-                        <div class="progress-text">${p.obtenidas}/${set.printedTotal} (${p.porcentaje.toFixed(1)}%)</div>
-                    </div>`;
-                });
-            }
+            const divAvanzadas = document.getElementById('inicio-carrusel-colecciones'); divAvanzadas.innerHTML = "";
+            let setsProgreso = window.todosLosSets.map(s => ({ ...s, meta: calcularProgresoSet(s.id, s.printedTotal) }));
+            setsProgreso = setsProgreso.filter(s => s.meta.porcentaje > 0).sort((a,b) => b.meta.porcentaje - a.meta.porcentaje);
+            if(setsProgreso.length === 0) divAvanzadas.innerHTML = "<p style='color:var(--text-muted);'>Añade cartas a The Vault para ver tu progreso.</p>";
+            else setsProgreso.slice(0, 5).forEach(s => { const p = s.meta; divAvanzadas.innerHTML += `<div class="set-card" onclick="abrirSet('${s.id}', '${s.name}')"><img src="${s.images.logo}"><strong>${s.name}</strong><div class="progress-container"><div class="progress-bar" style="width: ${p.porcentaje}%;"></div></div><div class="progress-text">${p.obtenidas}/${s.printedTotal}</div></div>`; });
         };
 
         window.filtrarYPaginarSets = () => {
-            if(window.todosLosSets.length === 0) return;
-            const textoBusqueda = document.getElementById('buscador-sets').value.toLowerCase();
-            const orden = document.getElementById('orden-sets').value;
-
-            window.setsFiltrados = window.todosLosSets.filter(set => set.name.toLowerCase().includes(textoBusqueda));
-            window.setsFiltrados = window.setsFiltrados.map(set => ({ ...set, meta_progreso: calcularProgresoSet(set.id, set.printedTotal) }));
-
-            window.setsFiltrados.sort((a, b) => {
-                if (orden === 'fechaReciente') return new Date(b.releaseDate) - new Date(a.releaseDate);
-                if (orden === 'fechaAntigua') return new Date(a.releaseDate) - new Date(b.releaseDate);
-                if (orden === 'porcentajeAlto') return b.meta_progreso.porcentaje - a.meta_progreso.porcentaje;
-                return 0;
-            });
-
-            const maxPaginas = Math.ceil(window.setsFiltrados.length / SETS_POR_PAGINA) || 1;
-            if (window.paginaActualSets > maxPaginas) window.paginaActualSets = 1;
-            window.pintarPaginaSetsActual();
+            if(window.todosLosSets.length===0) return;
+            const txt = document.getElementById('buscador-sets').value.toLowerCase(); const ord = document.getElementById('orden-sets').value;
+            window.setsFiltrados = window.todosLosSets.filter(s => s.name.toLowerCase().includes(txt)).map(s => ({ ...s, meta_progreso: calcularProgresoSet(s.id, s.printedTotal) }));
+            window.setsFiltrados.sort((a, b) => { if (ord === 'fechaReciente') return new Date(b.releaseDate) - new Date(a.releaseDate); if (ord === 'fechaAntigua') return new Date(a.releaseDate) - new Date(b.releaseDate); return b.meta_progreso.porcentaje - a.meta_progreso.porcentaje; });
+            const max = Math.ceil(window.setsFiltrados.length / SETS_POR_PAGINA) || 1; if (window.paginaActualSets > max) window.paginaActualSets = 1; window.pintarPaginaSetsActual();
         };
 
-        window.cambiarPaginaSets = (direccion) => {
-            const maxPaginas = Math.ceil(window.setsFiltrados.length / SETS_POR_PAGINA);
-            const nuevaPagina = window.paginaActualSets + direccion;
-            if (nuevaPagina >= 1 && nuevaPagina <= maxPaginas) {
-                window.paginaActualSets = nuevaPagina;
-                window.pintarPaginaSetsActual();
-                document.querySelector('main').scrollTo(0,0);
-            }
+        window.cambiarPaginaSets = (dir) => {
+            const max = Math.ceil(window.setsFiltrados.length / SETS_POR_PAGINA); const nueva = window.paginaActualSets + dir;
+            if (nueva >= 1 && nueva <= max) { window.paginaActualSets = nueva; window.pintarPaginaSetsActual(); document.querySelector('main').scrollTo(0,0); }
         };
 
         window.pintarPaginaSetsActual = () => {
-            const div = document.getElementById('lista-sets');
-            const inicio = (window.paginaActualSets - 1) * SETS_POR_PAGINA;
-            const fin = inicio + SETS_POR_PAGINA;
-            const setsPaginados = window.setsFiltrados.slice(inicio, fin);
-
-            div.innerHTML = "";
-            setsPaginados.forEach(set => {
-                const p = set.meta_progreso;
-                const textoProgreso = `${p.obtenidas} / ${set.printedTotal} (${p.porcentaje.toFixed(1)}%)`;
-                div.innerHTML += `
-                    <div class="set-card" onclick="abrirSet('${set.id}', '${set.name}')">
-                        <div><img src="${set.images.logo}"><strong>${set.name}</strong><br><span style="font-size:12px; color:var(--text-muted)">${set.releaseDate.substring(0,4)}</span></div>
-                        <div>
-                            <div class="progress-container"><div class="progress-bar" style="width: ${p.porcentaje > 100 ? 100 : p.porcentaje}%;"></div></div>
-                            <div class="progress-text">${textoProgreso}</div>
-                        </div>
-                    </div>`;
-            });
-            const maxPaginas = Math.ceil(window.setsFiltrados.length / SETS_POR_PAGINA) || 1;
-            document.getElementById('texto-paginacion').innerText = `Página ${window.paginaActualSets} de ${maxPaginas}`;
+            const div = document.getElementById('lista-sets'); const inio = (window.paginaActualSets - 1) * SETS_POR_PAGINA;
+            const sets = window.setsFiltrados.slice(inio, inio + SETS_POR_PAGINA); div.innerHTML = "";
+            sets.forEach(s => { const p = s.meta_progreso; div.innerHTML += `<div class="set-card" onclick="abrirSet('${s.id}', '${s.name}')"><div><img src="${s.images.logo}"><strong>${s.name}</strong><br><span style="font-size:12px; color:var(--text-muted)">${s.releaseDate.substring(0,4)}</span></div><div><div class="progress-container"><div class="progress-bar" style="width: ${p.porcentaje > 100 ? 100 : p.porcentaje}%;"></div></div><div class="progress-text">${p.obtenidas}/${s.printedTotal} (${p.porcentaje.toFixed(1)}%)</div></div></div>`; });
+            document.getElementById('texto-paginacion').innerText = `Página ${window.paginaActualSets} de ${Math.ceil(window.setsFiltrados.length / SETS_POR_PAGINA) || 1}`;
         };
 
-        // ==============================================
-        // CARTAS, DRAWER Y AFILIADOS
-        // ==============================================
         window.abrirSet = async (id, nombre) => {
-            window.cambiarPantalla('pantalla-detalle-set');
-            document.getElementById('titulo-set-actual').innerText = nombre;
-            window.modoSeleccionLote = false; window.cartasSeleccionadas.clear(); window.actualizarUIModoLote();
-            document.getElementById('select-orden').value = "numero";
-
-            const galeria = document.getElementById('galeria-cartas');
-            galeria.innerHTML = "<p>Descargando cartas del set...</p>";
-            try {
-                const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}&pageSize=250`);
-                const json = await res.json();
-                window.cartasSetActual = json.data;
-                json.data.forEach(c => window.cacheCartas[c.id] = c);
-                window.pintarGaleriaSet();
-            } catch (e) { galeria.innerHTML = "Error de red al cargar cartas."; }
+            window.cambiarPantalla('pantalla-detalle-set'); document.getElementById('titulo-set-actual').innerText = nombre;
+            window.modoSeleccionLote = false; window.cartasSeleccionadas.clear(); window.actualizarUIModoLote(); document.getElementById('select-orden').value = "numero";
+            const galeria = document.getElementById('galeria-cartas'); galeria.innerHTML = "<p>Descargando cartas...</p>";
+            try { const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}&pageSize=250`); const json = await res.json(); window.cartasSetActual = json.data; json.data.forEach(c => window.cacheCartas[c.id] = c); window.pintarGaleriaSet(); } catch (e) { galeria.innerHTML = "Error."; }
         };
 
         window.pintarGaleriaSet = () => {
-            const galeria = document.getElementById('galeria-cartas');
-            galeria.innerHTML = "";
-            window.cartasSetActual.forEach(c => {
-                const laTengo = window.miVaultIds.includes(c.id);
-                const claseBase = laTengo ? "" : "no-obtenida";
-                const claseSel = window.cartasSeleccionadas.has(c.id) ? "seleccionada" : "";
-                galeria.innerHTML += `
-                    <div id="wrap-${c.id}" class="carta-wrapper ${claseBase} ${claseSel}" onclick="interactuarConCarta('${c.id}')">
-                        <div class="marca-seleccion">✓</div>
-                        <img src="${c.images.small}">
-                        <div style="font-size: 12px; margin-top:5px; text-align:center; color: var(--text-muted);">${c.cardmarket?.prices?.averageSellPrice ? c.cardmarket.prices.averageSellPrice.toFixed(2) + ' €' : '-'}</div>
-                    </div>`;
-            });
+            const galeria = document.getElementById('galeria-cartas'); galeria.innerHTML = "";
+            window.cartasSetActual.forEach(c => { const laTengo = window.miVaultIds.includes(c.id); const claseSel = window.cartasSeleccionadas.has(c.id) ? "seleccionada" : ""; galeria.innerHTML += `<div id="wrap-${c.id}" class="carta-wrapper ${laTengo ? "" : "no-obtenida"} ${claseSel}" onclick="interactuarConCarta('${c.id}')"><div class="marca-seleccion">✓</div><img src="${c.images.small}"><div style="font-size: 12px; margin-top:5px; text-align:center; color: var(--text-muted);">${c.cardmarket?.prices?.averageSellPrice ? c.cardmarket.prices.averageSellPrice.toFixed(2) + ' €' : '-'}</div></div>`; });
         };
 
         window.ordenarSet = () => {
-            const criterio = document.getElementById('select-orden').value;
-            window.cartasSetActual.sort((a, b) => {
-                if (criterio === 'precioAlto') return (b.cardmarket?.prices?.averageSellPrice || 0) - (a.cardmarket?.prices?.averageSellPrice || 0);
-                if (criterio === 'precioBajo') return (a.cardmarket?.prices?.averageSellPrice || 0) - (b.cardmarket?.prices?.averageSellPrice || 0);
-                if (criterio === 'nombre') return a.name.localeCompare(b.name);
-                return parseInt(a.number) - parseInt(b.number);
-            });
+            const ord = document.getElementById('select-orden').value;
+            window.cartasSetActual.sort((a, b) => { if (ord === 'precioAlto') return (b.cardmarket?.prices?.averageSellPrice || 0) - (a.cardmarket?.prices?.averageSellPrice || 0); if (ord === 'precioBajo') return (a.cardmarket?.prices?.averageSellPrice || 0) - (b.cardmarket?.prices?.averageSellPrice || 0); if (ord === 'nombre') return a.name.localeCompare(b.name); return parseInt(a.number) - parseInt(b.number); });
             window.pintarGaleriaSet();
         };
 
-        window.interactuarConCarta = (idCarta) => {
-            if (window.modoSeleccionLote) {
-                const wrapper = document.getElementById(`wrap-${idCarta}`);
-                if (window.cartasSeleccionadas.has(idCarta)) { window.cartasSeleccionadas.delete(idCarta); wrapper.classList.remove('seleccionada'); } 
-                else { window.cartasSeleccionadas.add(idCarta); wrapper.classList.add('seleccionada'); }
-                document.getElementById('contador-lote').innerText = `${window.cartasSeleccionadas.size} sel.`;
-            } else { window.abrirDrawer(idCarta); }
-        };
-
+        window.interactuarConCarta = (id) => { if (window.modoSeleccionLote) { const wrap = document.getElementById(`wrap-${id}`); if (window.cartasSeleccionadas.has(id)) { window.cartasSeleccionadas.delete(id); wrap.classList.remove('seleccionada'); } else { window.cartasSeleccionadas.add(id); wrap.classList.add('seleccionada'); } document.getElementById('contador-lote').innerText = `${window.cartasSeleccionadas.size} sel.`; } else { window.abrirDrawer(id); } };
         window.toggleModoLote = () => { window.modoSeleccionLote = !window.modoSeleccionLote; window.cartasSeleccionadas.clear(); window.pintarGaleriaSet(); window.actualizarUIModoLote(); };
-        window.actualizarUIModoLote = () => {
-            const btn = document.getElementById('btn-toggle-lote'); const menu = document.getElementById('acciones-lote');
-            if (window.modoSeleccionLote) { btn.innerText = "Cancelar"; btn.style.background = "var(--border)"; menu.style.display = "flex"; document.getElementById('contador-lote').innerText = "0 sel."; } 
-            else { btn.innerText = "Selección en Lote"; btn.style.background = "transparent"; menu.style.display = "none"; }
-        };
+        window.actualizarUIModoLote = () => { const btn = document.getElementById('btn-toggle-lote'); const menu = document.getElementById('acciones-lote'); if (window.modoSeleccionLote) { btn.innerText = "Cancelar"; btn.style.background = "var(--border)"; menu.style.display = "flex"; document.getElementById('contador-lote').innerText = "0 sel."; } else { btn.innerText = "Selección en Lote"; btn.style.background = "transparent"; menu.style.display = "none"; } };
 
         window.guardarLoteNube = async (accion) => {
-            if (!usuarioActual) return alert("Inicia sesión para modificar.");
-            if (window.cartasSeleccionadas.size === 0) return;
-            const btn = document.getElementById(accion === 'add' ? 'btn-lote-add' : 'btn-lote-remove');
-            const originalText = btn.innerText; btn.innerText = "...";
-            const arraySeleccion = Array.from(window.cartasSeleccionadas);
-            
-            if (accion === 'add') window.miVaultIds = [...new Set([...window.miVaultIds, ...arraySeleccion])];
-            else if (accion === 'remove') window.miVaultIds = window.miVaultIds.filter(id => !arraySeleccion.includes(id));
-            
-            await guardarEnNube(); btn.innerText = originalText; window.toggleModoLote();
+            if (!usuarioActual) return alert("Inicia sesión."); if (window.cartasSeleccionadas.size === 0) return;
+            const arr = Array.from(window.cartasSeleccionadas); if (accion === 'add') window.miVaultIds = [...new Set([...window.miVaultIds, ...arr])]; else window.miVaultIds = window.miVaultIds.filter(id => !arr.includes(id));
+            await guardarEnNube(); window.toggleModoLote();
         };
 
-        window.abrirDrawer = async (idCarta) => {
+        window.abrirDrawer = async (id) => {
             document.getElementById('drawer-overlay').style.opacity = '1'; document.getElementById('drawer-overlay').style.pointerEvents = 'all'; document.getElementById('side-drawer').style.right = '0';
-            cartaActiva = window.cacheCartas[idCarta];
-            document.getElementById('drawer-img').src = cartaActiva.images.large; document.getElementById('drawer-nombre').innerText = cartaActiva.name; document.getElementById('drawer-set').innerText = cartaActiva.set.name;
-            const p = cartaActiva.cardmarket?.prices?.averageSellPrice; document.getElementById('drawer-precio').innerText = p ? p.toFixed(2) + " €" : "N/D";
-            document.getElementById('drawer-rareza').innerText = cartaActiva.rarity || 'Normal';
-            
-            // LOGICA AFILIADOS
-            const urlCardmarket = cartaActiva.cardmarket?.url || 'https://www.cardmarket.com/';
-            // Genera una búsqueda en eBay con el nombre de la carta y el set + tu ID ficticio de afiliado
-            const queryEbay = encodeURIComponent(`${cartaActiva.name} ${cartaActiva.set.name}`);
-            const urlEbay = `https://www.ebay.es/sch/i.html?_nkw=${queryEbay}&campid=5338123456`; // campid = ID Afiliado
-            
-            document.getElementById('btn-comprar-cm').href = urlCardmarket;
-            document.getElementById('btn-comprar-ebay').href = urlEbay;
-
+            cartaActiva = window.cacheCartas[id]; document.getElementById('drawer-img').src = cartaActiva.images.large; document.getElementById('drawer-nombre').innerText = cartaActiva.name; document.getElementById('drawer-set').innerText = cartaActiva.set.name;
+            const p = cartaActiva.cardmarket?.prices?.averageSellPrice; document.getElementById('drawer-precio').innerText = p ? p.toFixed(2) + " €" : "N/D"; document.getElementById('drawer-rareza').innerText = cartaActiva.rarity || 'Normal';
+            const urlEbay = `https://www.ebay.es/sch/i.html?_nkw=${encodeURIComponent(cartaActiva.name + ' ' + cartaActiva.set.name)}&campid=5338123456`;
+            document.getElementById('btn-comprar-cm').href = cartaActiva.cardmarket?.url || '#'; document.getElementById('btn-comprar-ebay').href = urlEbay;
             window.actualizarBotonDrawer();
         };
-
         window.cerrarDrawer = () => { document.getElementById('drawer-overlay').style.opacity = '0'; document.getElementById('drawer-overlay').style.pointerEvents = 'none'; document.getElementById('side-drawer').style.right = '-450px'; };
-
-        window.actualizarBotonDrawer = () => {
-            const btn = document.getElementById('btn-vault');
-            if(window.miVaultIds.includes(cartaActiva.id)) { btn.innerText = "Quitar de The Vault"; btn.style.background = "var(--surface)"; btn.style.color = "var(--text-main)"; } 
-            else { btn.innerText = "Añadir a The Vault"; btn.style.background = "var(--accent)"; btn.style.color = "var(--accent-text)"; }
-        };
-
-        window.toggleVault = async () => {
-            if (!usuarioActual) return alert("Inicia Sesión con Google primero.");
-            const id = cartaActiva.id; const btn = document.getElementById('btn-vault'); btn.innerText = "Sincronizando...";
-            if (window.miVaultIds.includes(id)) window.miVaultIds = window.miVaultIds.filter(x => x !== id); else window.miVaultIds.push(id);
-            await guardarEnNube(); window.actualizarBotonDrawer();
-            const wrapper = document.getElementById(`wrap-${id}`);
-            if(wrapper) wrapper.className = window.miVaultIds.includes(id) ? "carta-wrapper" : "carta-wrapper no-obtenida";
-        };
-
-        // Pintar pestaña Boveda (se alimenta de la caché que ya bajó inicio)
-        window.cargarBovedaGrid = () => {
-            const grid = document.getElementById('grid-boveda');
-            if (!usuarioActual) { grid.innerHTML = "<p>Inicia sesión con Google para ver tu bóveda.</p>"; return; }
-            if (window.miVaultIds.length === 0) { grid.innerHTML = "<p>Tu bóveda está vacía.</p>"; return; }
-            grid.innerHTML = "";
-            window.miVaultIds.forEach(id => {
-                const c = window.cacheCartas[id];
-                if(c) grid.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`;
-            });
-        };
-
-        window.buscarMercado = async () => {
-            const t = document.getElementById('buscador-input').value; const r = document.getElementById('resultados-mercado');
-            if(t==="") return; r.innerHTML = "Buscando...";
-            const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:${t}`); const json = await res.json();
-            r.innerHTML = ""; json.data.forEach(c => { window.cacheCartas[c.id] = c; r.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`; });
-        };
+        window.actualizarBotonDrawer = () => { const btn = document.getElementById('btn-vault'); if(window.miVaultIds.includes(cartaActiva.id)) { btn.innerText = "Quitar de The Vault"; btn.style.background = "var(--surface)"; btn.style.color = "var(--text-main)"; } else { btn.innerText = "Añadir a The Vault"; btn.style.background = "var(--accent)"; btn.style.color = "var(--accent-text)"; } };
+        window.toggleVault = async () => { if (!usuarioActual) return alert("Inicia Sesión."); const id = cartaActiva.id; if (window.miVaultIds.includes(id)) window.miVaultIds = window.miVaultIds.filter(x => x !== id); else window.miVaultIds.push(id); await guardarEnNube(); window.actualizarBotonDrawer(); const wrap = document.getElementById(`wrap-${id}`); if(wrap) wrap.className = window.miVaultIds.includes(id) ? "carta-wrapper" : "carta-wrapper no-obtenida"; };
+        window.cargarBovedaGrid = () => { const grid = document.getElementById('grid-boveda'); if (!usuarioActual) { grid.innerHTML = "<p>Inicia sesión.</p>"; return; } if (window.miVaultIds.length === 0) { grid.innerHTML = "<p>Bóveda vacía.</p>"; return; } grid.innerHTML = ""; window.miVaultIds.forEach(id => { const c = window.cacheCartas[id]; if(c) grid.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`; }); };
+        window.buscarMercado = async () => { const t = document.getElementById('buscador-input').value; const r = document.getElementById('resultados-mercado'); if(t==="") return; r.innerHTML = "Buscando..."; const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:${t}`); const json = await res.json(); r.innerHTML = ""; json.data.forEach(c => { window.cacheCartas[c.id] = c; r.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`; }); };
     </script>
-</body>
-</html>
 </body>
 </html>

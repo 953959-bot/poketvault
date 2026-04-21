@@ -238,7 +238,7 @@
             const div = document.getElementById('lista-sets');
             if (div.innerHTML.includes("set-card")) return;
             div.innerHTML = "<p>Cargando catálogo...</p>";
-            const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=21');
+            const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=150');
             const json = await res.json();
             div.innerHTML = "";
             json.data.forEach(s => {

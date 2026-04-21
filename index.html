@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéTasador PRO V17</title>
+    <title>PokéTasador PRO V18</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --bg: #ffffff; --surface: #f9fafb; --border: #e5e7eb; --text-main: #111827; --text-muted: #6b7280; --accent: #111827; --accent-text: #ffffff; --success: #10b981; --danger: #ef4444; --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -37,7 +37,7 @@
         .btn:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
 
-        /* GRID SETS Y CARRUSELES */
+        /* GRID Y CARRUSELES */
         .grid-sets { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
         .set-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 25px; cursor: pointer; transition: 0.3s; text-align: center; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
         .set-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--success); }
@@ -45,13 +45,13 @@
         .progress-container { width: 100%; background-color: var(--border); border-radius: 4px; height: 6px; margin-top: 15px; overflow: hidden; }
         .progress-bar { height: 100%; background-color: var(--success); transition: width 0.5s; }
         .progress-text { font-size: 12px; color: var(--text-muted); margin-top: 5px; font-weight: 600; }
+        
         .carrusel-horizontal { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 15px; scroll-snap-type: x mandatory; }
         .carrusel-horizontal .set-card { min-width: 250px; scroll-snap-align: start; flex: 0 0 auto; }
         .carrusel-horizontal .carta-wrapper { min-width: 160px; scroll-snap-align: start; flex: 0 0 auto; }
         .carrusel-horizontal::-webkit-scrollbar { height: 8px; }
         .carrusel-horizontal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
         
-        /* GRID CARTAS Y TENDENCIAS */
         .grid-galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; margin-top: 20px; }
         .carta-wrapper { position: relative; cursor: pointer; transition: 0.2s; border-radius: 10px; }
         .carta-wrapper img { width: 100%; border-radius: 10px; display: block; border: 3px solid transparent; transition: 0.2s; background: var(--surface); min-height: 220px; }
@@ -68,7 +68,6 @@
         .secreta { color: #d97706; font-weight: bold; background: #fef3c7; padding: 2px 6px; border-radius: 4px; display: inline-block; margin-top: 4px;}
         body.dark-mode .secreta { background: #78350f; color: #fde68a; }
 
-        /* ZONA PRECIO Y TENDENCIA EN VAULT */
         .box-tendencia { text-align: center; margin-top: 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; padding: 8px 5px;}
         .precio-actual { font-size: 14px; font-weight: bold; color: var(--text-main); }
         .badge-tendencia { font-size: 12px; font-weight: bold; display: inline-flex; align-items: center; gap: 2px; margin-top: 4px;}
@@ -76,7 +75,7 @@
         .tendencia-down { color: var(--danger); }
         .tendencia-flat { color: var(--text-muted); }
 
-        /* LAYOUT VAULT & WISHLIST */
+        /* LAYOUT VAULT */
         .layout-split { display: flex; gap: 30px; align-items: flex-start; }
         .main-content { flex: 1; }
         .side-stats { width: 320px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 20px; max-height: calc(100vh - 100px); overflow-y: auto; position: sticky; top: 20px; }
@@ -84,23 +83,30 @@
         .set-vault-item.inactive { opacity: 0.4; }
         .set-vault-logo { width: 40px; height: 25px; object-fit: contain; }
 
-        /* DASHBOARD */
-        .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center;}
+        /* NUEVO: DESPLEGABLE DEL BUSCADOR DE MERCADO */
+        .dropdown-resultados { position: absolute; top: 100%; left: 0; right: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); max-height: 300px; overflow-y: auto; z-index: 50; display: none; margin-top: 5px; }
+        .dropdown-item { display: flex; align-items: center; gap: 15px; padding: 10px 15px; cursor: pointer; border-bottom: 1px solid var(--surface); transition: 0.2s;}
+        .dropdown-item:hover { background: var(--surface); }
+        .dropdown-item img { width: 40px; height: 25px; object-fit: contain; }
+        .dropdown-item-info { flex: 1; font-size: 13px;}
+        .dropdown-item-precio { font-weight: bold; color: var(--success); }
 
-        /* DRAWER */
+        /* DASHBOARD & DRAWER */
+        .metric-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 25px; margin-bottom: 20px; display: flex; flex-direction: column; justify-content: center;}
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000; }
         .drawer { position: fixed; top: 0; right: -450px; width: 450px; height: 100vh; background: var(--bg); border-left: 1px solid var(--border); transition: right 0.4s; z-index: 1001; display: flex; flex-direction: column; }
         .drawer-content { flex: 1; overflow-y: auto; padding: 30px; }
         .drawer-content img { width: 220px; border-radius: 10px; display: block; margin: 0 auto 20px auto; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
         .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid var(--surface); align-items: center; font-size: 14px;}
         .drawer-footer { padding: 20px 30px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 8px; background: var(--surface); }
+        .hot-badge { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; padding: 6px; border-radius: 8px; font-weight: bold; font-size: 12px; margin-bottom: 15px; text-align: center;}
 
-        /* MODAL JUEGO */
+        /* JUEGO */
         .modal-juego { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.9); background: var(--bg); padding: 30px; border-radius: 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.2); width: 95%; max-width: 800px; z-index: 1002; opacity: 0; pointer-events: none; transition: 0.3s; text-align: center; border: 1px solid var(--border); }
         .modal-juego.activo { opacity: 1; pointer-events: all; transform: translate(-50%, -50%) scale(1); }
         .vs-container { display: flex; justify-content: center; align-items: center; gap: 20px; margin-top: 20px; }
         .carta-juego { width: 180px; border-radius: 10px; cursor: pointer; transition: 0.3s; }
-        .hot-badge { background: #fee2e2; color: #ef4444; border: 1px solid #fca5a5; padding: 6px; border-radius: 8px; font-weight: bold; font-size: 12px; margin-bottom: 15px; text-align: center;}
+        .action-toolbar { display: flex; gap: 15px; align-items: center; background: var(--surface); padding: 15px; border-radius: 10px; border: 1px solid var(--border); margin-bottom: 20px;}
     </style>
 </head>
 <body class="mostrar-detalles">
@@ -113,7 +119,7 @@
 
         <div id="user-panel" class="user-profile">
             <p id="user-text">Cargando...</p>
-            <div id="badge-racha-nav" class="racha-badge" style="display:none; margin-bottom: 10px; justify-content:center; background:#ff9800; color:white; padding:5px 10px; border-radius:20px; font-size:12px; font-weight:bold;">🔥 0 Días</div>
+            <div id="badge-racha-nav" style="display:none; margin-bottom: 10px; justify-content:center; background:#ff9800; color:white; padding:5px 10px; border-radius:20px; font-size:12px; font-weight:bold;">🔥 0 Días</div>
             <button id="btn-login" class="btn" style="width: 100%; font-size: 13px;">Iniciar con Google</button>
         </div>
 
@@ -122,7 +128,7 @@
             <button id="btn-boveda" onclick="cambiarPantalla('pantalla-boveda')">◒ Vault</button>
             <button id="btn-wishlist" onclick="cambiarPantalla('pantalla-wishlist')">🎯 Lista de Caza</button>
             <button id="btn-colecciones" onclick="cambiarPantalla('pantalla-colecciones')">📚 Expansiones</button>
-            <button id="btn-mercado" onclick="cambiarPantalla('pantalla-mercado')">⚲ Mercado</button>
+            <button id="btn-mercado" onclick="cambiarPantalla('pantalla-mercado')">⚲ Mercado Global</button>
             <button id="btn-perfil" onclick="cambiarPantalla('pantalla-perfil')">⚙️ Ajustes</button>
             
             <button onclick="togglePrivacidad()" style="margin-top: 10px; font-size: 12px; border: 1px solid var(--border);">👁️ Privacidad: <span id="estado-privacidad">Off</span></button>
@@ -133,7 +139,7 @@
     <main>
         <div id="pantalla-inicio" class="pantalla activa">
             <h2>Dashboard</h2>
-            <div class="dashboard-header" style="display:flex; gap:20px;">
+            <div style="display:flex; gap:20px; margin-bottom:20px;">
                 <div class="metric-card" style="flex:1;">
                     <p style="margin:0 0 10px 0; color:var(--text-muted); font-size:14px; text-transform:uppercase; font-weight:600;">Patrimonio Estimado</p>
                     <h3 id="inicio-valor-total" class="dinero-blur" style="color: var(--success); font-size:40px; margin:0; font-weight:300;">0.00 €</h3>
@@ -164,7 +170,7 @@
 
         <div id="pantalla-wishlist" class="pantalla">
             <h2>Lista de Caza 🎯</h2>
-            <p style="color: var(--text-muted); margin-bottom: 30px;">Cartas que quieres conseguir. Monitoriza sus precios aquí.</p>
+            <p style="color: var(--text-muted); margin-bottom: 30px;">Cartas que quieres conseguir. Las tendencias te indican si es buen momento para comprar.</p>
             <div id="grid-wishlist" class="grid-galeria"></div>
         </div>
 
@@ -198,11 +204,35 @@
 
         <div id="pantalla-mercado" class="pantalla">
             <h2>Mercado Global</h2>
-            <div style="display:flex; gap:10px; margin-bottom:20px;">
-                <input type="text" id="buscador-input" placeholder="Ej: Charizard..." style="flex:1">
-                <button class="btn" onclick="buscarMercado()">Buscar</button>
+            
+            <div style="display:flex; gap:10px; margin-bottom:30px;">
+                <div style="flex:1; position:relative;">
+                    <input type="text" id="buscador-input" placeholder="Busca un Pokémon o Carta (ej: Pikachu)..." style="width:100%" oninput="buscarMercadoEnVivo()" autocomplete="off">
+                    <div id="dropdown-mercado" class="dropdown-resultados"></div>
+                </div>
+                <select id="orden-mercado" onchange="ordenarResultadosMercado()">
+                    <option value="relevancia">Relevancia</option>
+                    <option value="precioAlto">Precio (Mayor)</option>
+                    <option value="precioBajo">Precio (Menor)</option>
+                    <option value="fechaNueva">Más Nuevas</option>
+                    <option value="fechaVieja">Más Antiguas</option>
+                </select>
+                <button class="btn" onclick="ejecutarBusquedaCompletaMercado()">Buscar</button>
             </div>
-            <div id="resultados-mercado" class="grid-galeria"></div>
+
+            <div id="mercado-inicio-widgets">
+                <h3>🔥 Cartas en Tendencia (Subiendo)</h3>
+                <div id="mercado-hot" class="carrusel-horizontal"><p style="color:var(--text-muted);">Analizando el mercado global...</p></div>
+
+                <h3>💡 Recomendadas para ti</h3>
+                <p style="font-size:13px; color:var(--text-muted); margin-top:-10px;">Basado en tu Vault.</p>
+                <div id="mercado-recomendadas" class="carrusel-horizontal"><p style="color:var(--text-muted);">Guarda cartas en tu Vault para recibir recomendaciones.</p></div>
+            </div>
+
+            <div id="resultados-mercado-contenedor" style="display:none;">
+                <h3>Resultados de búsqueda</h3>
+                <div id="resultados-mercado" class="grid-galeria"></div>
+            </div>
         </div>
 
         <div id="pantalla-perfil" class="pantalla">
@@ -269,7 +299,7 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
-        // TUS CLAVES
+        // TUS CLAVES INTACTAS
         const firebaseConfig = {
             apiKey: "AIzaSyC6kKfcphTMzfY07eL1LSb2NLpCYOYxtW8",
             authDomain: "pokevault-f03aa.firebaseapp.com",
@@ -284,64 +314,53 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        window.miVaultIds = [];
-        window.miWishlistIds = [];
-        let usuarioActual = null;
-        let datosPerfil = { racha: 0, ultimoLogin: "" };
-        
-        window.cacheCartas = {};
-        window.todosLosSets = []; // RAM PURA - Nada de localStorage roto
-        
-        let cartaActiva = null;
-        let miGrafica = null;
+        window.miVaultIds = []; window.miWishlistIds = [];
+        let usuarioActual = null; let datosPerfil = { racha: 0, ultimoLogin: "" };
+        window.cacheCartas = {}; window.todosLosSets = []; 
+        let cartaActiva = null; let miGrafica = null;
 
-        // INICIALIZACIÓN
+        // Variables de Mercado
+        let timeoutBuscador = null;
+        let mercadoHotCargado = false;
+        window.resultadosMercadoActual = [];
+
         window.onload = () => { 
             if(localStorage.getItem('tema') === 'dark') document.body.classList.add('dark-mode'); 
             if(localStorage.getItem('mostrarDetalles') === 'false') toggleDetalles(true); 
-            // Lanzamos la descarga de sets en segundo plano al abrir
             descargarSetsMaster();
+            
+            // Cerrar dropdown al hacer clic fuera
+            document.addEventListener('click', (e) => {
+                if(!e.target.closest('#buscador-input') && !e.target.closest('#dropdown-mercado')) {
+                    document.getElementById('dropdown-mercado').style.display = 'none';
+                }
+            });
         };
 
         // AUTH
         onAuthStateChanged(auth, async (user) => {
-            const btnLogin = document.getElementById('btn-login');
-            const btnLogout = document.getElementById('btn-logout');
-            const badgeNav = document.getElementById('badge-racha-nav');
-
+            const btnLogin = document.getElementById('btn-login'); const btnLogout = document.getElementById('btn-logout'); const badgeNav = document.getElementById('badge-racha-nav');
             if (user) {
-                usuarioActual = user;
-                document.getElementById('user-text').innerHTML = `Hola, <strong>${user.displayName.split(' ')[0]}</strong>`;
+                usuarioActual = user; document.getElementById('user-text').innerHTML = `Hola, <strong>${user.displayName.split(' ')[0]}</strong>`;
                 btnLogin.style.display = 'none'; btnLogout.style.display = 'block';
-                
-                const docSnap = await getDoc(doc(db, "usuarios", user.uid));
-                const hoy = new Date().toDateString();
+                const docSnap = await getDoc(doc(db, "usuarios", user.uid)); const hoy = new Date().toDateString();
                 if (docSnap.exists()) {
-                    const d = docSnap.data();
-                    window.miVaultIds = d.cartasGuardadas || [];
-                    window.miWishlistIds = d.wishlist || [];
-                    datosPerfil.racha = d.racha || 0;
-                    datosPerfil.ultimoLogin = d.ultimoLogin || "";
-                    
+                    const d = docSnap.data(); window.miVaultIds = d.cartasGuardadas || []; window.miWishlistIds = d.wishlist || []; datosPerfil.racha = d.racha || 0; datosPerfil.ultimoLogin = d.ultimoLogin || "";
                     if (datosPerfil.ultimoLogin !== hoy) {
                         const ayer = new Date(); ayer.setDate(ayer.getDate() - 1);
                         if (datosPerfil.ultimoLogin === ayer.toDateString()) datosPerfil.racha += 1; else datosPerfil.racha = 1;
-                        datosPerfil.ultimoLogin = hoy;
-                        await setDoc(doc(db, "usuarios", user.uid), { racha: datosPerfil.racha, ultimoLogin: hoy }, { merge: true });
+                        datosPerfil.ultimoLogin = hoy; await setDoc(doc(db, "usuarios", user.uid), { racha: datosPerfil.racha, ultimoLogin: hoy }, { merge: true });
                     }
                 } else {
                     window.miVaultIds = []; window.miWishlistIds = []; datosPerfil.racha = 1; datosPerfil.ultimoLogin = hoy;
                     await setDoc(doc(db, "usuarios", user.uid), { cartasGuardadas: [], wishlist: [], racha: 1, ultimoLogin: hoy });
                 }
-                
                 badgeNav.style.display = 'inline-flex'; badgeNav.innerHTML = `🔥 ${datosPerfil.racha} Días`;
                 procesarAnaliticas();
             } else {
                 usuarioActual = null; window.miVaultIds = []; window.miWishlistIds = []; datosPerfil = {racha:0};
-                document.getElementById('user-text').innerText = "Inicia sesión";
-                btnLogin.style.display = 'block'; btnLogout.style.display = 'none'; badgeNav.style.display = 'none';
-                document.getElementById('inicio-valor-total').innerText = "0.00 €";
-                document.getElementById('inicio-contador-cartas').innerText = "0 cartas en Vault";
+                document.getElementById('user-text').innerText = "Inicia sesión"; btnLogin.style.display = 'block'; btnLogout.style.display = 'none'; badgeNav.style.display = 'none';
+                document.getElementById('inicio-valor-total').innerText = "0.00 €"; document.getElementById('inicio-contador-cartas').innerText = "0 cartas en Vault";
                 if(miGrafica) miGrafica.destroy();
             }
         });
@@ -356,285 +375,237 @@
             else { btn.innerText = "Mostrar Detalles"; localStorage.setItem('mostrarDetalles', 'false'); }
         };
 
-        // LOGIN/LOGOUT
         document.getElementById('btn-login').addEventListener('click', () => signInWithPopup(auth, provider));
         document.getElementById('btn-logout').addEventListener('click', () => signOut(auth).then(() => location.reload()));
 
-        async function guardarNube() {
-            if(!usuarioActual) return;
-            await setDoc(doc(db, "usuarios", usuarioActual.uid), { cartasGuardadas: window.miVaultIds, wishlist: window.miWishlistIds }, { merge: true });
-            procesarAnaliticas();
-        }
+        async function guardarNube() { if(!usuarioActual) return; await setDoc(doc(db, "usuarios", usuarioActual.uid), { cartasGuardadas: window.miVaultIds, wishlist: window.miWishlistIds }, { merge: true }); procesarAnaliticas(); }
 
-        // GENERADOR DE TENDENCIAS Y DETALLES (LA MAGIA FINANCIERA)
+        // FUNCIONES DE RENDERIZADO VISUAL
         function generarHTMLTendencia(c) {
-            let pActual = c.cardmarket?.prices?.averageSellPrice || 0;
-            let pViejo = c.cardmarket?.prices?.avg30 || pActual;
-            
+            let pActual = c.cardmarket?.prices?.averageSellPrice || 0; let pViejo = c.cardmarket?.prices?.avg30 || pActual;
             let htmlTendencia = `<span class="badge-tendencia tendencia-flat">~ 0.0%</span>`;
-            
             if (pActual > 0 && pViejo > 0 && pActual !== pViejo) {
-                let porcentaje = ((pActual - pViejo) / pViejo) * 100;
-                if (porcentaje > 0) {
-                    htmlTendencia = `<span class="badge-tendencia tendencia-up">▲ +${porcentaje.toFixed(1)}%</span>`;
-                } else {
-                    htmlTendencia = `<span class="badge-tendencia tendencia-down">▼ ${porcentaje.toFixed(1)}%</span>`;
-                }
+                let p = ((pActual - pViejo) / pViejo) * 100;
+                if (p > 0) htmlTendencia = `<span class="badge-tendencia tendencia-up">▲ +${p.toFixed(1)}%</span>`;
+                else htmlTendencia = `<span class="badge-tendencia tendencia-down">▼ ${p.toFixed(1)}%</span>`;
             }
-            
-            return `
-            <div class="box-tendencia">
-                <div class="precio-actual dinero-blur">${pActual > 0 ? pActual.toFixed(2) + ' €' : 'N/D'}</div>
-                ${htmlTendencia}
-            </div>`;
+            return `<div class="box-tendencia"><div class="precio-actual dinero-blur">${pActual > 0 ? pActual.toFixed(2) + ' €' : 'N/D'}</div>${htmlTendencia}</div>`;
         }
+        function generarInfoExtra(c) { const isSecret = parseInt(c.number.replace(/\D/g,'')) > parseInt(c.set.printedTotal); return `<div class="carta-info-extra"><strong>${c.name}</strong><span>${c.set.name}</span><br>${isSecret ? '<span class="secreta">★ Secret</span>' : c.number+'/'+c.set.printedTotal}</div>`; }
 
-        function generarInfoExtra(c) {
-            const isSecret = parseInt(c.number.replace(/\D/g,'')) > parseInt(c.set.printedTotal);
-            return `<div class="carta-info-extra"><strong>${c.name}</strong><span>${c.set.name}</span><br>${isSecret ? '<span class="secreta">★ Secret</span>' : c.number+'/'+c.set.printedTotal}</div>`;
-        }
-
-        // DESCARGA DE SETS (En RAM, sin petar localStorage)
-        async function descargarSetsMaster() {
-            try {
-                const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=150');
-                const json = await res.json();
-                window.todosLosSets = json.data;
-                if(document.getElementById('pantalla-colecciones').classList.contains('activa')) filtrarYPaginarSets();
-            } catch (e) { console.error("Error al bajar expansiones", e); }
-        }
+        async function descargarSetsMaster() { try { const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=150'); const json = await res.json(); window.todosLosSets = json.data; if(document.getElementById('pantalla-colecciones').classList.contains('activa')) filtrarYPaginarSets(); } catch (e) { } }
 
         // ANALÍTICAS
         async function procesarAnaliticas() {
             const todasIds = [...new Set([...window.miVaultIds, ...window.miWishlistIds])];
             if(todasIds.length === 0) return;
-            
             const faltantes = todasIds.filter(id => !window.cacheCartas[id]);
             if(faltantes.length > 0) {
                 const chunks = []; for(let i=0; i<faltantes.length; i+=50) chunks.push(faltantes.slice(i, i+50));
-                for(const chunk of chunks) {
-                    const query = chunk.map(id => `id:${id}`).join(' OR ');
-                    const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=${query}`);
-                    const json = await res.json();
-                    json.data.forEach(c => window.cacheCartas[c.id] = c);
-                }
+                for(const chunk of chunks) { const query = chunk.map(id => `id:${id}`).join(' OR '); const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=${query}`); const json = await res.json(); json.data.forEach(c => window.cacheCartas[c.id] = c); }
             }
-
-            let totalVal = 0, t30 = 0, t7 = 0;
-            let cartasVaultObjects = [];
-            
+            let totalVal = 0, t30 = 0, t7 = 0; let cartasVaultObjects = [];
             window.miVaultIds.forEach(id => {
                 const c = window.cacheCartas[id];
                 if(c) {
-                    cartasVaultObjects.push(c);
-                    const p = c.cardmarket?.prices;
-                    if(p) {
-                        totalVal += p.averageSellPrice || 0;
-                        t30 += p.avg30 || p.averageSellPrice || 0;
-                        t7 += p.avg7 || p.averageSellPrice || 0;
-                    }
+                    cartasVaultObjects.push(c); const p = c.cardmarket?.prices;
+                    if(p) { totalVal += p.averageSellPrice || 0; t30 += p.avg30 || p.averageSellPrice || 0; t7 += p.avg7 || p.averageSellPrice || 0; }
                 }
             });
-
-            document.getElementById('inicio-valor-total').innerText = totalVal.toFixed(2) + " €";
-            document.getElementById('inicio-contador-cartas').innerText = `${window.miVaultIds.length} cartas en Vault`;
+            document.getElementById('inicio-valor-total').innerText = totalVal.toFixed(2) + " €"; document.getElementById('inicio-contador-cartas').innerText = `${window.miVaultIds.length} cartas en Vault`;
             actualizarGrafica([t30, t7, totalVal]);
-            
-            // Top 5 Inicio
             cartasVaultObjects.sort((a,b) => (b.cardmarket?.prices?.averageSellPrice || 0) - (a.cardmarket?.prices?.averageSellPrice || 0));
-            const divTop = document.getElementById('inicio-top-cartas');
-            divTop.innerHTML = "";
-            cartasVaultObjects.slice(0, 5).forEach(c => {
-                divTop.innerHTML += `<div class="carta-wrapper" onclick="abrirDrawer('${c.id}')"><img src="${c.images.small}">${generarHTMLTendencia(c)}</div>`;
-            });
-
+            const divTop = document.getElementById('inicio-top-cartas'); divTop.innerHTML = "";
+            cartasVaultObjects.slice(0, 5).forEach(c => { divTop.innerHTML += `<div class="carta-wrapper" onclick="abrirDrawer('${c.id}')"><img src="${c.images.small}">${generarHTMLTendencia(c)}</div>`; });
             if(document.getElementById('pantalla-boveda').classList.contains('activa')) renderVault(cartasVaultObjects, totalVal);
             if(document.getElementById('pantalla-wishlist').classList.contains('activa')) renderWishlist();
         }
 
         function actualizarGrafica(datos) {
-            const ctx = document.getElementById('graficaVault').getContext('2d');
-            if(miGrafica) miGrafica.destroy();
+            const ctx = document.getElementById('graficaVault').getContext('2d'); if(miGrafica) miGrafica.destroy();
             const color = document.body.classList.contains('dark-mode') ? '#10b981' : '#111827';
-            miGrafica = new Chart(ctx, {
-                type: 'line',
-                data: { labels: ['30 Días', '7 Días', 'Hoy'], datasets: [{ data: datos, borderColor: color, tension: 0.3, fill: true, backgroundColor: color+'22' }] },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } }
-            });
+            miGrafica = new Chart(ctx, { type: 'line', data: { labels: ['30 Días', '7 Días', 'Hoy'], datasets: [{ data: datos, borderColor: color, tension: 0.3, fill: true, backgroundColor: color+'22' }] }, options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { display: false }, x: { grid: { display: false } } } } });
         }
 
-        // PANTALLAS
+        // CONTROL PANTALLAS
         window.cambiarPantalla = (id) => {
-            document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa'));
-            document.getElementById(id).classList.add('activa');
-            document.querySelectorAll('.menu-items button').forEach(b => b.classList.remove('activo'));
-            if(document.getElementById(`btn-${id.split('-')[1]}`)) document.getElementById(`btn-${id.split('-')[1]}`).classList.add('activo');
-            
+            document.querySelectorAll('.pantalla').forEach(p => p.classList.remove('activa')); document.getElementById(id).classList.add('activa'); document.querySelectorAll('.menu-items button').forEach(b => b.classList.remove('activo')); if(document.getElementById(`btn-${id.split('-')[1]}`)) document.getElementById(`btn-${id.split('-')[1]}`).classList.add('activo');
             if(id === 'pantalla-boveda') procesarAnaliticas();
             if(id === 'pantalla-wishlist') renderWishlist();
             if(id === 'pantalla-colecciones') filtrarYPaginarSets();
+            if(id === 'pantalla-mercado') iniciarMercadoGlobal();
         };
 
         function renderVault(cartas, total) {
-            const grid = document.getElementById('grid-boveda');
-            const side = document.getElementById('vault-sets-sidebar');
-            grid.innerHTML = ""; side.innerHTML = "";
-            let setsMap = {};
-
-            if(!cartas || cartas.length === 0) {
-                grid.innerHTML = "<p>Tu Vault está vacío.</p>";
-                return;
-            }
-
+            const grid = document.getElementById('grid-boveda'); const side = document.getElementById('vault-sets-sidebar'); grid.innerHTML = ""; side.innerHTML = ""; let setsMap = {};
+            if(!cartas || cartas.length === 0) { grid.innerHTML = "<p>Tu Vault está vacío.</p>"; return; }
             cartas.forEach(c => {
                 grid.innerHTML += `<div class="carta-wrapper" onclick="abrirDrawer('${c.id}')"><img src="${c.images.small}">${generarHTMLTendencia(c)}${generarInfoExtra(c)}</div>`;
                 if(!setsMap[c.set.id]) setsMap[c.set.id] = { name: c.set.name, logo: c.set.images.logo, count: 0, val: 0 };
-                setsMap[c.set.id].count++;
-                setsMap[c.set.id].val += c.cardmarket?.prices?.averageSellPrice || 0;
+                setsMap[c.set.id].count++; setsMap[c.set.id].val += c.cardmarket?.prices?.averageSellPrice || 0;
             });
-
-            Object.values(setsMap).sort((a,b) => b.val - a.val).forEach(s => {
-                side.innerHTML += `<div class="set-vault-item"><img src="${s.logo}" class="set-vault-logo"><div style="flex:1"><strong>${s.name}</strong><br><small style="color:var(--text-muted)">${s.count} cartas | <span class="dinero-blur" style="color:var(--success);font-weight:bold;">${s.val.toFixed(2)}€</span></small></div></div>`;
-            });
+            Object.values(setsMap).sort((a,b) => b.val - a.val).forEach(s => { side.innerHTML += `<div class="set-vault-item"><img src="${s.logo}" class="set-vault-logo"><div style="flex:1"><strong>${s.name}</strong><br><small style="color:var(--text-muted)">${s.count} cartas | <span class="dinero-blur" style="color:var(--success);font-weight:bold;">${s.val.toFixed(2)}€</span></small></div></div>`; });
         }
 
         function renderWishlist() {
             const grid = document.getElementById('grid-wishlist');
             grid.innerHTML = window.miWishlistIds.length === 0 ? "<p>No tienes objetivos de caza.</p>" : "";
-            window.miWishlistIds.forEach(id => {
-                const c = window.cacheCartas[id];
-                if(c) grid.innerHTML += `<div class="carta-wrapper" onclick="abrirDrawer('${c.id}')"><img src="${c.images.small}">${generarHTMLTendencia(c)}${generarInfoExtra(c)}</div>`;
-            });
+            window.miWishlistIds.forEach(id => { const c = window.cacheCartas[id]; if(c) grid.innerHTML += `<div class="carta-wrapper" onclick="abrirDrawer('${c.id}')"><img src="${c.images.small}">${generarHTMLTendencia(c)}${generarInfoExtra(c)}</div>`; });
         }
 
-        // DRAWER Y AFILIADOS
-        window.abrirDrawer = (id) => {
-            cartaActiva = window.cacheCartas[id];
-            document.getElementById('drawer-overlay').style.opacity = "1";
-            document.getElementById('drawer-overlay').style.pointerEvents = "all";
-            document.getElementById('side-drawer').style.right = "0";
+        // =====================================
+        // MERCADO GLOBAL (REDISEÑADO)
+        // =====================================
+        async function iniciarMercadoGlobal() {
+            if(!mercadoHotCargado) {
+                const divHot = document.getElementById('mercado-hot');
+                const divRec = document.getElementById('mercado-recomendadas');
+                
+                try {
+                    // Bajamos muestra de Scarlet & Violet base y 151
+                    const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:sv1 OR set.id:sv3pt5&pageSize=100`);
+                    const json = await res.json();
+                    
+                    // HOT: avg1 > avg30
+                    let hotCards = json.data.filter(c => c.cardmarket?.prices && c.cardmarket.prices.avg1 > c.cardmarket.prices.avg30);
+                    hotCards.sort((a,b) => b.cardmarket.prices.avg1 - a.cardmarket.prices.avg1); // Más caras primero
+                    
+                    divHot.innerHTML = "";
+                    hotCards.slice(0,10).forEach(c => {
+                        window.cacheCartas[c.id] = c;
+                        divHot.innerHTML += `<div class="carta-wrapper" onclick="abrirDrawer('${c.id}')"><img src="${c.images.small}">${generarHTMLTendencia(c)}${generarInfoExtra(c)}</div>`;
+                    });
+
+                    // RECOMENDADAS: Baseadas en Vault
+                    if(window.miVaultIds.length > 0) {
+                        const randomId = window.miVaultIds[Math.floor(Math.random() * window.miVaultIds.length)];
+                        const cardVault = window.cacheCartas[randomId];
+                        if(cardVault) {
+                            const primerNombre = cardVault.name.split(' ')[0]; // Ej: "Charizard"
+                            const resRec = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:"${primerNombre}"&pageSize=15`);
+                            const jsonRec = await resRec.json();
+                            let recCards = jsonRec.data.filter(c => !window.miVaultIds.includes(c.id)); // Que no tenga ya
+                            
+                            divRec.innerHTML = "";
+                            recCards.slice(0,10).forEach(c => {
+                                window.cacheCartas[c.id] = c;
+                                divRec.innerHTML += `<div class="carta-wrapper" onclick="abrirDrawer('${c.id}')"><img src="${c.images.small}">${generarHTMLTendencia(c)}${generarInfoExtra(c)}</div>`;
+                            });
+                        }
+                    }
+                    mercadoHotCargado = true;
+                } catch(e) { divHot.innerHTML = "Error cargando mercado."; }
+            }
+        }
+
+        window.buscarMercadoEnVivo = () => {
+            clearTimeout(timeoutBuscador);
+            const val = document.getElementById('buscador-input').value.trim();
+            const dropdown = document.getElementById('dropdown-mercado');
             
-            document.getElementById('drawer-img').src = cartaActiva.images.large;
-            document.getElementById('drawer-nombre').innerText = cartaActiva.name;
-            document.getElementById('drawer-set-detalle').innerText = cartaActiva.set.name;
-            document.getElementById('drawer-numero').innerText = `${cartaActiva.number}/${cartaActiva.set.printedTotal}`;
+            if(val.length < 3) { dropdown.style.display = 'none'; return; }
             
-            const pActual = cartaActiva.cardmarket?.prices?.averageSellPrice || 0;
-            document.getElementById('drawer-precio').innerText = pActual.toFixed(2) + " €";
-            
-            const pViejo = cartaActiva.cardmarket?.prices?.avg30 || pActual;
-            document.getElementById('drawer-badge-hot').style.display = (pActual > pViejo) ? 'inline-flex' : 'none';
-            
-            document.getElementById('btn-vault').innerText = window.miVaultIds.includes(id) ? "Quitar del Vault" : "Añadir al Vault";
-            document.getElementById('btn-wishlist-toggle').innerText = window.miWishlistIds.includes(id) ? "Quitar de Caza 🎯" : "Añadir a Caza 🎯";
-            
-            const q = encodeURIComponent(cartaActiva.name + " " + cartaActiva.set.name);
-            document.getElementById('btn-comprar-ebay').href = `https://www.ebay.es/sch/i.html?_nkw=${q}&campid=TU_NUMERO_AQUI`;
-            document.getElementById('btn-vender-ebay').href = `https://www.ebay.es/sl/sell?target=item&productName=${q}`;
+            timeoutBuscador = setTimeout(async () => {
+                dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">Buscando...</div>`;
+                dropdown.style.display = 'block';
+                try {
+                    // Busca max 10 para el autocomplete
+                    const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:"${val}*"&pageSize=10`);
+                    const json = await res.json();
+                    
+                    if(json.data.length === 0) {
+                        dropdown.innerHTML = `<div style="padding:10px; color:var(--text-muted); text-align:center;">No hay resultados</div>`;
+                    } else {
+                        dropdown.innerHTML = "";
+                        json.data.forEach(c => {
+                            window.cacheCartas[c.id] = c;
+                            const p = c.cardmarket?.prices?.averageSellPrice ? c.cardmarket.prices.averageSellPrice.toFixed(2)+'€' : '-';
+                            dropdown.innerHTML += `
+                            <div class="dropdown-item" onclick="abrirDrawerYLimpiar('${c.id}')">
+                                <img src="${c.set.images.logo}" title="${c.set.name}">
+                                <div class="dropdown-item-info">
+                                    <strong>${c.name}</strong> <span style="color:var(--text-muted)">(${c.number}/${c.set.printedTotal})</span>
+                                </div>
+                                <div class="dropdown-item-precio">${p}</div>
+                            </div>`;
+                        });
+                    }
+                } catch(e) { dropdown.style.display = 'none'; }
+            }, 500); // 500ms debounce
         };
 
+        window.abrirDrawerYLimpiar = (id) => {
+            document.getElementById('dropdown-mercado').style.display = 'none';
+            window.abrirDrawer(id);
+        };
+
+        window.ejecutarBusquedaCompletaMercado = async () => {
+            const val = document.getElementById('buscador-input').value.trim();
+            if(val === "") return;
+            document.getElementById('dropdown-mercado').style.display = 'none';
+            document.getElementById('mercado-inicio-widgets').style.display = 'none';
+            document.getElementById('resultados-mercado-contenedor').style.display = 'block';
+            
+            const grid = document.getElementById('resultados-mercado');
+            grid.innerHTML = "Buscando en la base de datos mundial...";
+            
+            try {
+                // Descargar 50 para la vista completa
+                const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:"${val}*"&pageSize=50`);
+                const json = await res.json();
+                window.resultadosMercadoActual = json.data;
+                json.data.forEach(c => window.cacheCartas[c.id] = c);
+                window.ordenarResultadosMercado();
+            } catch(e) { grid.innerHTML = "Error de red."; }
+        };
+
+        window.ordenarResultadosMercado = () => {
+            if(window.resultadosMercadoActual.length === 0) return;
+            const crit = document.getElementById('orden-mercado').value;
+            
+            window.resultadosMercadoActual.sort((a,b) => {
+                if(crit === 'precioAlto') return (b.cardmarket?.prices?.averageSellPrice || 0) - (a.cardmarket?.prices?.averageSellPrice || 0);
+                if(crit === 'precioBajo') return (a.cardmarket?.prices?.averageSellPrice || 0) - (b.cardmarket?.prices?.averageSellPrice || 0);
+                if(crit === 'fechaNueva') return new Date(b.set.releaseDate) - new Date(a.set.releaseDate);
+                if(crit === 'fechaVieja') return new Date(a.set.releaseDate) - new Date(b.set.releaseDate);
+                return 0; // relevancia (por defecto API)
+            });
+            
+            const grid = document.getElementById('resultados-mercado');
+            grid.innerHTML = "";
+            window.resultadosMercadoActual.forEach(c => {
+                grid.innerHTML += `<div class="carta-wrapper" onclick="abrirDrawer('${c.id}')"><img src="${c.images.small}">${generarHTMLTendencia(c)}${generarInfoExtra(c)}</div>`;
+            });
+        };
+
+        // DRAWER 
+        window.abrirDrawer = (id) => {
+            cartaActiva = window.cacheCartas[id]; document.getElementById('drawer-overlay').style.opacity = "1"; document.getElementById('drawer-overlay').style.pointerEvents = "all"; document.getElementById('side-drawer').style.right = "0"; document.getElementById('drawer-img').src = cartaActiva.images.large; document.getElementById('drawer-nombre').innerText = cartaActiva.name; document.getElementById('drawer-set-detalle').innerText = cartaActiva.set.name; document.getElementById('drawer-numero').innerText = `${cartaActiva.number}/${cartaActiva.set.printedTotal}`;
+            const pActual = cartaActiva.cardmarket?.prices?.averageSellPrice || 0; document.getElementById('drawer-precio').innerText = pActual.toFixed(2) + " €";
+            const pViejo = cartaActiva.cardmarket?.prices?.avg30 || pActual; document.getElementById('drawer-badge-hot').style.display = (pActual > pViejo) ? 'inline-flex' : 'none';
+            document.getElementById('btn-vault').innerText = window.miVaultIds.includes(id) ? "Quitar del Vault" : "Añadir al Vault"; document.getElementById('btn-wishlist-toggle').innerText = window.miWishlistIds.includes(id) ? "Quitar de Caza 🎯" : "Añadir a Caza 🎯";
+            const q = encodeURIComponent(cartaActiva.name + " " + cartaActiva.set.name); document.getElementById('btn-comprar-ebay').href = `https://www.ebay.es/sch/i.html?_nkw=${q}&campid=5338123456`; document.getElementById('btn-vender-ebay').href = `https://www.ebay.es/sl/sell?target=item&productName=${q}`;
+        };
         window.cerrarDrawer = () => { document.getElementById('drawer-overlay').style.opacity = "0"; document.getElementById('drawer-overlay').style.pointerEvents = "none"; document.getElementById('side-drawer').style.right = "-450px"; };
 
         window.toggleVault = () => { if(!usuarioActual) return alert("Inicia Sesión"); const id = cartaActiva.id; if(window.miVaultIds.includes(id)) window.miVaultIds = window.miVaultIds.filter(x => x !== id); else window.miVaultIds.push(id); guardarNube(); cerrarDrawer(); };
         window.toggleWishlist = () => { if(!usuarioActual) return alert("Inicia Sesión"); const id = cartaActiva.id; if(window.miWishlistIds.includes(id)) window.miWishlistIds = window.miWishlistIds.filter(x => x !== id); else window.miWishlistIds.push(id); guardarNube(); cerrarDrawer(); };
 
-        // EXPANSIONES (Paginadas desde RAM)
+        // EXPANSIONES
         let paginaSets = 1; let setsFiltrados = [];
-        window.filtrarYPaginarSets = () => {
-            if(window.todosLosSets.length === 0) return;
-            const txt = document.getElementById('buscador-sets').value.toLowerCase();
-            const ord = document.getElementById('orden-sets').value;
-            
-            setsFiltrados = window.todosLosSets.filter(s => s.name.toLowerCase().includes(txt));
-            setsFiltrados.sort((a,b) => {
-                if(ord === 'fechaReciente') return new Date(b.releaseDate) - new Date(a.releaseDate);
-                if(ord === 'fechaAntigua') return new Date(a.releaseDate) - new Date(b.releaseDate);
-                return 0;
-            });
-            paginaSets = 1; window.pintarSetsPaginados();
-        };
-
-        window.pintarSetsPaginados = () => {
-            const grid = document.getElementById('lista-sets');
-            const start = (paginaSets - 1) * 15;
-            grid.innerHTML = "";
-            setsFiltrados.slice(start, start + 15).forEach(s => {
-                grid.innerHTML += `<div class="set-card" onclick="abrirSet('${s.id}', '${s.name}')"><img src="${s.images.logo}"><strong>${s.name}</strong><small style="color:var(--text-muted)">${s.releaseDate.substring(0,4)}</small></div>`;
-            });
-            document.getElementById('texto-paginacion').innerText = `Página ${paginaSets} de ${Math.ceil(setsFiltrados.length/15) || 1}`;
-        };
+        window.filtrarYPaginarSets = () => { if(window.todosLosSets.length === 0) return; const txt = document.getElementById('buscador-sets').value.toLowerCase(); const ord = document.getElementById('orden-sets').value; setsFiltrados = window.todosLosSets.filter(s => s.name.toLowerCase().includes(txt)); setsFiltrados.sort((a,b) => { if(ord === 'fechaReciente') return new Date(b.releaseDate) - new Date(a.releaseDate); if(ord === 'fechaAntigua') return new Date(a.releaseDate) - new Date(b.releaseDate); return 0; }); paginaSets = 1; window.pintarSetsPaginados(); };
+        window.pintarSetsPaginados = () => { const grid = document.getElementById('lista-sets'); const start = (paginaSets - 1) * 15; grid.innerHTML = ""; setsFiltrados.slice(start, start + 15).forEach(s => { grid.innerHTML += `<div class="set-card" onclick="abrirSet('${s.id}', '${s.name}')"><img src="${s.images.logo}"><strong>${s.name}</strong><small style="color:var(--text-muted)">${s.releaseDate.substring(0,4)}</small></div>`; }); document.getElementById('texto-paginacion').innerText = `Página ${paginaSets} de ${Math.ceil(setsFiltrados.length/15) || 1}`; };
         window.cambiarPaginaSets = (n) => { const max = Math.ceil(setsFiltrados.length/15); const nPag = paginaSets + n; if(nPag >= 1 && nPag <= max) { paginaSets = nPag; window.pintarSetsPaginados(); document.querySelector('main').scrollTo(0,0);} };
 
-        // BUSCADOR GLOBAL Y DETALLE SET
-        window.abrirSet = async (id, nombre) => {
-            cambiarPantalla('pantalla-detalle-set');
-            document.getElementById('titulo-set-actual').innerText = nombre;
-            const gal = document.getElementById('galeria-cartas'); gal.innerHTML = "<p>Descargando cartas...</p>";
-            try {
-                const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}&pageSize=250`);
-                const json = await res.json();
-                window.cartasSetActual = json.data;
-                json.data.forEach(c => window.cacheCartas[c.id] = c);
-                window.ordenarSet();
-            } catch(e) { gal.innerHTML = "Error de red."; }
-        };
-
-        window.ordenarSet = () => {
-            const o = document.getElementById('select-orden').value;
-            window.cartasSetActual.sort((a,b) => {
-                if(o === 'precioAlto') return (b.cardmarket?.prices?.averageSellPrice || 0) - (a.cardmarket?.prices?.averageSellPrice || 0);
-                if(o === 'precioBajo') return (a.cardmarket?.prices?.averageSellPrice || 0) - (b.cardmarket?.prices?.averageSellPrice || 0);
-                return parseInt(a.number) - parseInt(b.number);
-            });
-            const gal = document.getElementById('galeria-cartas'); gal.innerHTML = "";
-            window.cartasSetActual.forEach(c => {
-                const check = window.miVaultIds.includes(c.id) ? "" : "no-obtenida";
-                gal.innerHTML += `<div class="carta-wrapper ${check}" onclick="abrirDrawer('${c.id}')"><img src="${c.images.small}">${generarHTMLTendencia(c)}${generarInfoExtra(c)}</div>`;
-            });
-        };
-
-        window.buscarMercado = async () => {
-            const t = document.getElementById('buscador-input').value; if(t==="") return;
-            const r = document.getElementById('resultados-mercado'); r.innerHTML = "Buscando...";
-            const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=name:${t}*`); const json = await res.json();
-            r.innerHTML = "";
-            json.data.forEach(c => { window.cacheCartas[c.id] = c; r.innerHTML += `<div class="carta-wrapper" onclick="abrirDrawer('${c.id}')"><img src="${c.images.small}">${generarHTMLTendencia(c)}${generarInfoExtra(c)}</div>`; });
-        };
+        window.abrirSet = async (id, nombre) => { cambiarPantalla('pantalla-detalle-set'); document.getElementById('titulo-set-actual').innerText = nombre; const gal = document.getElementById('galeria-cartas'); gal.innerHTML = "<p>Descargando cartas...</p>"; try { const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=set.id:${id}&pageSize=250`); const json = await res.json(); window.cartasSetActual = json.data; json.data.forEach(c => window.cacheCartas[c.id] = c); window.ordenarSet(); } catch(e) { gal.innerHTML = "Error de red."; } };
+        window.ordenarSet = () => { const o = document.getElementById('select-orden').value; window.cartasSetActual.sort((a,b) => { if(o === 'precioAlto') return (b.cardmarket?.prices?.averageSellPrice || 0) - (a.cardmarket?.prices?.averageSellPrice || 0); if(o === 'precioBajo') return (a.cardmarket?.prices?.averageSellPrice || 0) - (b.cardmarket?.prices?.averageSellPrice || 0); return parseInt(a.number) - parseInt(b.number); }); const gal = document.getElementById('galeria-cartas'); gal.innerHTML = ""; window.cartasSetActual.forEach(c => { const check = window.miVaultIds.includes(c.id) ? "" : "no-obtenida"; gal.innerHTML += `<div class="carta-wrapper ${check}" onclick="abrirDrawer('${c.id}')"><img src="${c.images.small}">${generarHTMLTendencia(c)}${generarInfoExtra(c)}</div>`; }); };
 
         // JUEGO
         let cartasJuego = []; let c1, c2, racha = 0;
-        window.abrirJuego = async () => {
-            document.getElementById('modal-juego').classList.add('activo'); document.getElementById('juego-overlay').style.opacity = "1"; document.getElementById('juego-overlay').style.pointerEvents = "all";
-            if(cartasJuego.length === 0) {
-                document.getElementById('juego-tablero').innerHTML = "<p>Conectando con el mercado mundial...</p>";
-                const res = await fetch(`https://api.pokemontcg.io/v2/cards?pageSize=50&page=${Math.floor(Math.random() * 20) + 1}`);
-                const json = await res.json();
-                cartasJuego = json.data.filter(c => c.cardmarket?.prices?.averageSellPrice > 1);
-            }
-            iniciarRondaJuego();
-        };
+        window.abrirJuego = async () => { document.getElementById('modal-juego').classList.add('activo'); document.getElementById('juego-overlay').style.opacity = "1"; document.getElementById('juego-overlay').style.pointerEvents = "all"; if(cartasJuego.length === 0) { document.getElementById('juego-tablero').innerHTML = "<p>Conectando con el mercado mundial...</p>"; const res = await fetch(`https://api.pokemontcg.io/v2/cards?pageSize=50&page=${Math.floor(Math.random() * 20) + 1}`); const json = await res.json(); cartasJuego = json.data.filter(c => c.cardmarket?.prices?.averageSellPrice > 1); } iniciarRondaJuego(); };
         window.cerrarJuego = () => { document.getElementById('modal-juego').classList.remove('activo'); document.getElementById('juego-overlay').style.opacity = "0"; document.getElementById('juego-overlay').style.pointerEvents = "none"; };
-        
-        window.iniciarRondaJuego = () => {
-            if(cartasJuego.length < 2) { window.abrirJuego(); return; }
-            document.getElementById('btn-siguiente-ronda').style.display = 'none';
-            c1 = cartasJuego.splice(Math.floor(Math.random()*cartasJuego.length), 1)[0];
-            c2 = cartasJuego.splice(Math.floor(Math.random()*cartasJuego.length), 1)[0];
-            document.getElementById('juego-tablero').innerHTML = `
-                <div style="text-align:center"><img src="${c1.images.large}" class="carta-juego" id="img-juego-1" onclick="resolver(1)"><br><small style="color:var(--text-muted)">${c1.name} (${c1.set.name})</small><div id="p1" style="font-size:24px; font-weight:bold; color:var(--success); opacity:0; transition:0.5s;">${c1.cardmarket.prices.averageSellPrice.toFixed(2)}€</div></div>
-                <div style="font-size:32px; font-weight:900; color:var(--text-muted); align-self:center">VS</div>
-                <div style="text-align:center"><img src="${c2.images.large}" class="carta-juego" id="img-juego-2" onclick="resolver(2)"><br><small style="color:var(--text-muted)">${c2.name} (${c2.set.name})</small><div id="p2" style="font-size:24px; font-weight:bold; color:var(--success); opacity:0; transition:0.5s;">${c2.cardmarket.prices.averageSellPrice.toFixed(2)}€</div></div>`;
-        };
-        window.resolver = (n) => {
-            document.getElementById('p1').style.opacity = 1; document.getElementById('p2').style.opacity = 1;
-            document.getElementById('img-juego-1').onclick = null; document.getElementById('img-juego-2').onclick = null;
-            const p1 = c1.cardmarket.prices.averageSellPrice; const p2 = c2.cardmarket.prices.averageSellPrice;
-            const win = (n===1 && p1 >= p2) || (n===2 && p2 >= p1);
-            if(win) { racha++; document.getElementById(`img-juego-${n}`).style.border = "4px solid var(--success)"; } 
-            else { racha = 0; document.getElementById(`img-juego-${n}`).style.border = "4px solid var(--danger)"; }
-            document.getElementById('juego-puntuacion').innerText = racha;
-            document.getElementById('btn-siguiente-ronda').style.display = 'inline-block';
-        };
+        window.iniciarRondaJuego = () => { if(cartasJuego.length < 2) { window.abrirJuego(); return; } document.getElementById('btn-siguiente-ronda').style.display = 'none'; c1 = cartasJuego.splice(Math.floor(Math.random()*cartasJuego.length), 1)[0]; c2 = cartasJuego.splice(Math.floor(Math.random()*cartasJuego.length), 1)[0]; document.getElementById('juego-tablero').innerHTML = `<div style="text-align:center"><img src="${c1.images.large}" class="carta-juego" id="img-juego-1" onclick="resolver(1)"><br><small style="color:var(--text-muted)">${c1.name} (${c1.set.name})</small><div id="p1" style="font-size:24px; font-weight:bold; color:var(--success); opacity:0; transition:0.5s;">${c1.cardmarket.prices.averageSellPrice.toFixed(2)}€</div></div><div style="font-size:32px; font-weight:900; color:var(--text-muted); align-self:center">VS</div><div style="text-align:center"><img src="${c2.images.large}" class="carta-juego" id="img-juego-2" onclick="resolver(2)"><br><small style="color:var(--text-muted)">${c2.name} (${c2.set.name})</small><div id="p2" style="font-size:24px; font-weight:bold; color:var(--success); opacity:0; transition:0.5s;">${c2.cardmarket.prices.averageSellPrice.toFixed(2)}€</div></div>`; };
+        window.resolver = (n) => { document.getElementById('p1').style.opacity = 1; document.getElementById('p2').style.opacity = 1; document.getElementById('img-juego-1').onclick = null; document.getElementById('img-juego-2').onclick = null; const p1 = c1.cardmarket.prices.averageSellPrice; const p2 = c2.cardmarket.prices.averageSellPrice; const win = (n===1 && p1 >= p2) || (n===2 && p2 >= p1); if(win) { racha++; document.getElementById(`img-juego-${n}`).style.border = "4px solid var(--success)"; } else { racha = 0; document.getElementById(`img-juego-${n}`).style.border = "4px solid var(--danger)"; } document.getElementById('juego-puntuacion').innerText = racha; document.getElementById('btn-siguiente-ronda').style.display = 'inline-block'; };
     </script>
 </body>
 </html>

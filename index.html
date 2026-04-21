@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PokéTasador PRO Cloud</title>
+    <title>PokéTasador PRO Cloud V7</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         :root { --bg: #ffffff; --surface: #f9fafb; --border: #e5e7eb; --text-main: #111827; --text-muted: #6b7280; --accent: #111827; --accent-text: #ffffff; --success: #10b981; --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
         body.dark-mode { --bg: #0f172a; --surface: #1e293b; --border: #334155; --text-main: #f8fafc; --text-muted: #94a3b8; --accent: #ffffff; --accent-text: #0f172a; }
@@ -26,8 +27,9 @@
         .pantalla { display: none; max-width: 1200px; margin: auto; animation: fade 0.4s ease; } .pantalla.activa { display: block; }
         @keyframes fade { from { opacity: 0; } to { opacity: 1; } }
         h2 { font-size: 28px; font-weight: 700; margin-top: 0; margin-bottom: 30px; letter-spacing: -0.5px; }
+        h3 { font-size: 20px; margin-top: 40px; margin-bottom: 20px; border-bottom: 2px solid var(--surface); padding-bottom: 10px; }
         input, select { padding: 10px 15px; font-size: 14px; background: var(--surface); border: 1px solid var(--border); color: var(--text-main); border-radius: 8px; outline: none; transition: 0.2s; }
-        .btn { background: var(--accent); color: var(--accent-text); border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .btn { background: var(--accent); color: var(--accent-text); border: none; padding: 10px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; transition: 0.2s; text-decoration: none; text-align: center; display: inline-block;}
         .btn:hover { opacity: 0.9; transform: translateY(-1px); }
         .btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); }
 
@@ -36,14 +38,16 @@
         .set-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 25px; cursor: pointer; transition: 0.3s; text-align: center; position: relative; display: flex; flex-direction: column; justify-content: space-between; }
         .set-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); border-color: var(--success); }
         .set-card img { max-height: 70px; max-width: 100%; object-fit: contain; margin: 0 auto 15px auto; display: block; }
-        
         .progress-container { width: 100%; background-color: var(--border); border-radius: 4px; height: 6px; margin-top: 15px; overflow: hidden; }
         .progress-bar { height: 100%; background-color: var(--success); transition: width 0.5s; }
         .progress-text { font-size: 12px; color: var(--text-muted); margin-top: 5px; font-weight: 600; }
 
-        /* PAGINACIÓN */
-        .paginacion-container { display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border); }
-        
+        /* CARRUSEL HORIZONTAL PARA INICIO */
+        .carrusel-horizontal { display: flex; gap: 20px; overflow-x: auto; padding-bottom: 15px; scroll-snap-type: x mandatory; }
+        .carrusel-horizontal .set-card { min-width: 250px; scroll-snap-align: start; flex: 0 0 auto; }
+        .carrusel-horizontal::-webkit-scrollbar { height: 8px; }
+        .carrusel-horizontal::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
         /* GRID CARTAS Y LOTE */
         .grid-galeria { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; margin-top: 20px; }
         .carta-wrapper { position: relative; cursor: pointer; transition: 0.2s; border-radius: 10px; }
@@ -57,20 +61,20 @@
         .carta-wrapper.seleccionada .marca-seleccion { display: block; }
 
         /* DASHBOARD Y DRAWER */
-        .dashboard-header { display: flex; gap: 20px; margin-bottom: 40px; }
-        .metric-card { flex: 1; padding: 30px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; }
-        .metric-card p { margin: 0 0 10px 0; color: var(--text-muted); font-size: 14px; text-transform: uppercase; }
-        .metric-card h3 { margin: 0; font-size: 42px; font-weight: 300; }
+        .dashboard-header { display: flex; gap: 20px; align-items: stretch; }
+        .metric-card { flex: 1; padding: 30px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; display: flex; flex-direction: column; justify-content: center;}
+        .metric-card p { margin: 0 0 10px 0; color: var(--text-muted); font-size: 14px; text-transform: uppercase; font-weight: 600;}
+        .metric-card h3 { margin: 0; font-size: 48px; font-weight: 300; }
         .drawer-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); backdrop-filter: blur(3px); opacity: 0; pointer-events: none; transition: 0.3s; z-index: 1000; }
-        .drawer { position: fixed; top: 0; right: -450px; width: 450px; height: 100vh; background: var(--bg); border-left: 1px solid var(--border); transition: right 0.4s; z-index: 1001; display: flex; flex-direction: column; }
+        .drawer { position: fixed; top: 0; right: -450px; width: 450px; height: 100vh; background: var(--bg); border-left: 1px solid var(--border); transition: right 0.4s; z-index: 1001; display: flex; flex-direction: column; box-shadow: -10px 0 30px rgba(0,0,0,0.1);}
         .drawer-header { padding: 30px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; }
         .drawer-content { flex: 1; overflow-y: auto; padding: 30px; }
         .drawer-content img { width: 220px; border-radius: 10px; display: block; margin: 0 auto 30px auto; box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
         .info-row { display: flex; justify-content: space-between; padding: 15px 0; border-bottom: 1px solid var(--surface); }
         .info-label { color: var(--text-muted); font-size: 14px; }
         .info-value { font-weight: 600; text-align: right;}
-        .drawer-footer { padding: 30px; border-top: 1px solid var(--border); display: flex; gap: 10px; background: var(--surface); }
-        .drawer-footer .btn { flex: 1; padding: 15px; }
+        .drawer-footer { padding: 20px 30px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 10px; background: var(--surface); }
+        .botones-compra { display: flex; gap: 10px; }
     </style>
 </head>
 <body>
@@ -83,7 +87,7 @@
             <button id="btn-logout" class="btn" style="width: 100%; background:#d32f2f; font-size: 13px; display:none;">Cerrar Sesión</button>
         </div>
         <div class="menu-items">
-            <button id="btn-inicio" class="activo" onclick="cambiarPantalla('pantalla-inicio')">✦ Inicio</button>
+            <button id="btn-inicio" class="activo" onclick="cambiarPantalla('pantalla-inicio')">✦ Panel Inicio</button>
             <button id="btn-boveda" onclick="cambiarPantalla('pantalla-boveda')">◒ The Vault</button>
             <button id="btn-colecciones" onclick="cambiarPantalla('pantalla-colecciones')">📚 Expansiones</button>
             <button id="btn-mercado" onclick="cambiarPantalla('pantalla-mercado')">⚲ Mercado</button>
@@ -93,22 +97,38 @@
 
     <main>
         <div id="pantalla-inicio" class="pantalla activa">
-            <h2>Panel de Control</h2>
-            <div class="metric-card"><p>Estado</p><h3>Sistema en la Nube Activo</h3></div>
+            <h2>Bienvenido a tu Portfolio</h2>
+            
+            <div class="dashboard-header">
+                <div class="metric-card" style="flex: 1;">
+                    <p>Valor Actual de The Vault</p>
+                    <h3 id="inicio-valor-total" style="color: var(--success);">0.00 €</h3>
+                    <p id="inicio-contador-cartas" style="margin-top: 10px; text-transform: none;">0 cartas aseguradas</p>
+                </div>
+                <div class="metric-card" style="flex: 2; position: relative;">
+                    <p>Evolución de Mercado (Últimos 30 días)</p>
+                    <canvas id="graficaVault"></canvas>
+                </div>
+            </div>
+
+            <h3>Colecciones Más Avanzadas</h3>
+            <div id="inicio-carrusel-colecciones" class="carrusel-horizontal">
+                <p style="color: var(--text-muted);">Sincronizando expansiones...</p>
+            </div>
+
+            <h3>Últimos Lanzamientos (Noticias)</h3>
+            <div id="inicio-carrusel-noticias" class="carrusel-horizontal">
+                <p style="color: var(--text-muted);">Cargando novedades...</p>
+            </div>
         </div>
 
         <div id="pantalla-boveda" class="pantalla">
             <h2>The Vault</h2>
-            <div class="dashboard-header">
-                <div class="metric-card"><p>Valor Total Estimado</p><h3 id="valor-total-boveda" style="color: var(--success);">0.00 €</h3></div>
-                <div class="metric-card"><p>Cartas Aseguradas</p><h3 id="contador-cartas">0</h3></div>
-            </div>
             <div id="grid-boveda" class="grid-galeria"></div>
         </div>
 
         <div id="pantalla-colecciones" class="pantalla">
             <h2>Catálogo de Expansiones</h2>
-            
             <div class="action-toolbar">
                 <input type="text" id="buscador-sets" placeholder="Buscar colección..." oninput="filtrarYPaginarSets()" style="flex: 1;">
                 <div style="display: flex; gap: 10px; align-items: center;">
@@ -120,12 +140,10 @@
                     </select>
                 </div>
             </div>
-
             <div id="lista-sets" class="grid-sets"></div>
-            
-            <div class="paginacion-container">
+            <div class="paginacion-container" style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 30px; padding-top: 20px; border-top: 1px solid var(--border);">
                 <button class="btn btn-outline" onclick="cambiarPaginaSets(-1)">Anterior</button>
-                <span id="texto-paginacion" style="font-weight: bold;">Página 1 de X</span>
+                <span id="texto-paginacion" style="font-weight: bold;">Página 1</span>
                 <button class="btn btn-outline" onclick="cambiarPaginaSets(1)">Siguiente</button>
             </div>
         </div>
@@ -133,7 +151,6 @@
         <div id="pantalla-detalle-set" class="pantalla">
             <button class="btn btn-outline" style="margin-bottom: 20px; padding: 6px 12px; font-size:12px;" onclick="cambiarPantalla('pantalla-colecciones')">← Volver</button>
             <h2 id="titulo-set-actual" style="margin-bottom: 10px;">Set</h2>
-            
             <div class="action-toolbar">
                 <div style="display: flex; gap: 10px; align-items: center;">
                     <span style="font-size: 14px; font-weight: 600;">Ordenar por:</span>
@@ -178,6 +195,10 @@
         </div>
         <div class="drawer-footer">
             <button class="btn" id="btn-vault" onclick="toggleVault()">Añadir a Vault</button>
+            <div class="botones-compra">
+                <a id="btn-comprar-cm" href="#" target="_blank" class="btn btn-outline" style="flex:1; border-color:#1565c0; color:#1565c0;">Cardmarket</a>
+                <a id="btn-comprar-ebay" href="#" target="_blank" class="btn btn-outline" style="flex:1; border-color:#e53935; color:#e53935;">eBay</a>
+            </div>
         </div>
     </div>
 
@@ -186,6 +207,7 @@
         import { getAuth, signInWithPopup, GoogleAuthProvider, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
         import { getFirestore, doc, getDoc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore.js";
 
+        // 🚨 TUS CLAVES DE FIREBASE 🚨
         const firebaseConfig = {
             apiKey: "AIzaSyC6kKfcphTMzfY07eL1LSb2NLpCYOYxtW8",
             authDomain: "pokevault-f03aa.firebaseapp.com",
@@ -205,18 +227,22 @@
         window.cacheCartas = {};
         let cartaActiva = null;
 
-        // VARIABLES PARA LAS COLECCIONES (Paginación)
+        // Variables de Paginación y Sets
         window.todosLosSets = []; 
         window.setsFiltrados = []; 
         window.paginaActualSets = 1;
         const SETS_POR_PAGINA = 15;
-
-        // Lote de Cartas
         window.cartasSetActual = [];
         window.modoSeleccionLote = false;
         window.cartasSeleccionadas = new Set();
+        
+        // Gráfica Global
+        let miGrafica = null;
 
-        window.onload = () => { if(localStorage.getItem('tema') === 'dark') document.body.classList.add('dark-mode'); };
+        window.onload = () => { 
+            if(localStorage.getItem('tema') === 'dark') document.body.classList.add('dark-mode'); 
+            window.descargarSetsMaster(); // Bajamos los sets al arrancar para rellenar el inicio
+        };
         window.toggleTema = () => { document.body.classList.toggle('dark-mode'); localStorage.setItem('tema', document.body.classList.contains('dark-mode') ? 'dark' : 'light'); };
 
         onAuthStateChanged(auth, async (user) => {
@@ -232,9 +258,7 @@
                 usuarioActual = null; window.miVaultIds = []; 
                 userText.innerHTML = "No has iniciado sesión";
                 btnLogin.style.display = 'block'; btnLogout.style.display = 'none';
-            }
-            if(document.getElementById('pantalla-colecciones').classList.contains('activa')) {
-                window.filtrarYPaginarSets();
+                actualizarDashboardInicio([], []); // Reset dashboard
             }
         });
 
@@ -246,11 +270,81 @@
             const docSnap = await getDoc(doc(db, "usuarios", usuarioActual.uid));
             if (docSnap.exists()) window.miVaultIds = docSnap.data().cartasGuardadas || [];
             else { await setDoc(doc(db, "usuarios", usuarioActual.uid), { cartasGuardadas: [] }); window.miVaultIds = []; }
+            
+            // Calculamos la gráfica y el total al entrar
+            procesarAnaliticasBoveda();
+        }
+
+        async function procesarAnaliticasBoveda() {
+            if(window.miVaultIds.length === 0) {
+                actualizarDashboardInicio([], []);
+                return;
+            }
+            try {
+                // Truco de la API: pedir todo el vault de golpe
+                const query = window.miVaultIds.map(id => `id:${id}`).join(' OR ');
+                const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=${query}`);
+                const json = await res.json();
+                
+                // Extraer el precio global sumando (1 día, 7 días, 30 días)
+                let totalHoy = 0, total7d = 0, total30d = 0;
+                
+                json.data.forEach(c => {
+                    window.cacheCartas[c.id] = c; // Alimentar caché global
+                    const precios = c.cardmarket?.prices;
+                    if(precios) {
+                        totalHoy += precios.avg1 || precios.averageSellPrice || 0;
+                        total7d += precios.avg7 || precios.averageSellPrice || 0;
+                        total30d += precios.avg30 || precios.averageSellPrice || 0;
+                    }
+                });
+
+                actualizarDashboardInicio(json.data, [total30d, total7d, totalHoy]);
+
+            } catch(e) { console.error("Error analíticas", e); }
+        }
+
+        function actualizarDashboardInicio(cartasVault, datosGrafica) {
+            // Textos
+            const total = datosGrafica.length > 0 ? datosGrafica[2] : 0;
+            document.getElementById('inicio-valor-total').innerText = total.toFixed(2) + " €";
+            document.getElementById('inicio-contador-cartas').innerText = `${cartasVault.length} cartas aseguradas`;
+
+            // Gráfica
+            const ctx = document.getElementById('graficaVault').getContext('2d');
+            if(miGrafica) miGrafica.destroy(); // Borrar gráfica vieja
+            
+            const colorLinea = document.body.classList.contains('dark-mode') ? '#10b981' : '#111827';
+            
+            miGrafica = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Hace 30 días', 'Hace 7 días', 'Hoy'],
+                    datasets: [{
+                        label: 'Valor de Bóveda (€)',
+                        data: datosGrafica.length > 0 ? datosGrafica : [0,0,0],
+                        borderColor: colorLinea,
+                        backgroundColor: colorLinea + '33', // Translúcido
+                        borderWidth: 3,
+                        tension: 0.3,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    plugins: { legend: { display: false } },
+                    scales: { y: { beginAtZero: false } }
+                }
+            });
+
+            // Actualizar el carrusel si ya tenemos los sets descargados
+            if(window.todosLosSets.length > 0) pintarCarruselesInicio();
         }
 
         async function guardarEnNube() {
             if (!usuarioActual) { alert("Inicia sesión primero."); return false; }
             await setDoc(doc(db, "usuarios", usuarioActual.uid), { cartasGuardadas: window.miVaultIds }, { merge: true });
+            procesarAnaliticasBoveda(); // Recalcular gráfica al guardar o borrar algo
             return true;
         }
 
@@ -261,25 +355,23 @@
             const btnMenu = document.getElementById(`btn-${id.split('-')[1]}`);
             if(btnMenu) btnMenu.classList.add('activo');
 
-            if(id === 'pantalla-colecciones') window.descargarSetsMaster();
-            if(id === 'pantalla-boveda') window.cargarBovedaUI();
+            if(id === 'pantalla-boveda') window.cargarBovedaGrid();
+            if(id === 'pantalla-colecciones') window.filtrarYPaginarSets(); // Actualizar barras
+            if(id === 'pantalla-inicio' && window.todosLosSets.length > 0) window.pintarCarruselesInicio(); // Actualizar carruseles
         };
 
+        // ==============================================
+        // LÓGICA DE COLECCIONES Y CARRUSELES DE INICIO
+        // ==============================================
         window.descargarSetsMaster = async () => {
-            if (window.todosLosSets.length > 0) {
-                window.filtrarYPaginarSets();
-                return; 
-            }
-            
-            document.getElementById('lista-sets').innerHTML = "<p>Descargando base de datos mundial de expansiones...</p>";
+            if (window.todosLosSets.length > 0) return; 
             try {
                 const res = await fetch('https://api.pokemontcg.io/v2/sets?orderBy=-releaseDate&pageSize=150');
                 const json = await res.json();
                 window.todosLosSets = json.data;
                 window.filtrarYPaginarSets(); 
-            } catch (e) { 
-                document.getElementById('lista-sets').innerHTML = "Error al conectar con la base de datos."; 
-            }
+                window.pintarCarruselesInicio();
+            } catch (e) { console.error("Error al cargar expansiones"); }
         };
 
         function calcularProgresoSet(setId, totalCartasSet) {
@@ -288,16 +380,52 @@
             return { obtenidas: cartasObtenidas, porcentaje: porcentaje };
         }
 
+        window.pintarCarruselesInicio = () => {
+            // 1. Carrusel de Noticias (Últimos 5 sets)
+            const divNoticias = document.getElementById('inicio-carrusel-noticias');
+            divNoticias.innerHTML = "";
+            // Los primeros 5 ya vienen ordenados por fecha de la API
+            window.todosLosSets.slice(0, 5).forEach(set => {
+                divNoticias.innerHTML += `
+                    <div class="set-card" onclick="abrirSet('${set.id}', '${set.name}')">
+                        <span style="position:absolute; top:10px; right:10px; background:var(--accent); color:var(--accent-text); padding:2px 8px; border-radius:4px; font-size:10px; font-weight:bold;">NUEVO</span>
+                        <img src="${set.images.logo}">
+                        <strong>${set.name}</strong>
+                    </div>`;
+            });
+
+            // 2. Carrusel de Colecciones Más Avanzadas
+            const divAvanzadas = document.getElementById('inicio-carrusel-colecciones');
+            divAvanzadas.innerHTML = "";
+            
+            // Calculamos progresos y ordenamos
+            let setsConProgreso = window.todosLosSets.map(set => ({ ...set, meta: calcularProgresoSet(set.id, set.printedTotal) }));
+            setsConProgreso = setsConProgreso.filter(s => s.meta.porcentaje > 0); // Solo las empezadas
+            setsConProgreso.sort((a,b) => b.meta.porcentaje - a.meta.porcentaje); // Mayor a menor
+
+            if(setsConProgreso.length === 0) {
+                divAvanzadas.innerHTML = "<p style='color:var(--text-muted);'>Empieza a guardar cartas en The Vault para ver tu progreso aquí.</p>";
+            } else {
+                setsConProgreso.slice(0, 5).forEach(set => {
+                    const p = set.meta;
+                    divAvanzadas.innerHTML += `
+                    <div class="set-card" onclick="abrirSet('${set.id}', '${set.name}')">
+                        <img src="${set.images.logo}">
+                        <strong>${set.name}</strong>
+                        <div class="progress-container"><div class="progress-bar" style="width: ${p.porcentaje}%;"></div></div>
+                        <div class="progress-text">${p.obtenidas}/${set.printedTotal} (${p.porcentaje.toFixed(1)}%)</div>
+                    </div>`;
+                });
+            }
+        };
+
         window.filtrarYPaginarSets = () => {
+            if(window.todosLosSets.length === 0) return;
             const textoBusqueda = document.getElementById('buscador-sets').value.toLowerCase();
             const orden = document.getElementById('orden-sets').value;
 
             window.setsFiltrados = window.todosLosSets.filter(set => set.name.toLowerCase().includes(textoBusqueda));
-
-            window.setsFiltrados = window.setsFiltrados.map(set => {
-                const progreso = calcularProgresoSet(set.id, set.printedTotal);
-                return { ...set, meta_progreso: progreso }; 
-            });
+            window.setsFiltrados = window.setsFiltrados.map(set => ({ ...set, meta_progreso: calcularProgresoSet(set.id, set.printedTotal) }));
 
             window.setsFiltrados.sort((a, b) => {
                 if (orden === 'fechaReciente') return new Date(b.releaseDate) - new Date(a.releaseDate);
@@ -308,7 +436,6 @@
 
             const maxPaginas = Math.ceil(window.setsFiltrados.length / SETS_POR_PAGINA) || 1;
             if (window.paginaActualSets > maxPaginas) window.paginaActualSets = 1;
-
             window.pintarPaginaSetsActual();
         };
 
@@ -332,34 +459,26 @@
             setsPaginados.forEach(set => {
                 const p = set.meta_progreso;
                 const textoProgreso = `${p.obtenidas} / ${set.printedTotal} (${p.porcentaje.toFixed(1)}%)`;
-
                 div.innerHTML += `
                     <div class="set-card" onclick="abrirSet('${set.id}', '${set.name}')">
+                        <div><img src="${set.images.logo}"><strong>${set.name}</strong><br><span style="font-size:12px; color:var(--text-muted)">${set.releaseDate.substring(0,4)}</span></div>
                         <div>
-                            <img src="${set.images.logo}" alt="${set.name}">
-                            <strong>${set.name}</strong><br>
-                            <span style="font-size:12px; color:var(--text-muted)">${set.releaseDate.substring(0,4)}</span>
-                        </div>
-                        <div>
-                            <div class="progress-container">
-                                <div class="progress-bar" style="width: ${p.porcentaje > 100 ? 100 : p.porcentaje}%;"></div>
-                            </div>
+                            <div class="progress-container"><div class="progress-bar" style="width: ${p.porcentaje > 100 ? 100 : p.porcentaje}%;"></div></div>
                             <div class="progress-text">${textoProgreso}</div>
                         </div>
                     </div>`;
             });
-
             const maxPaginas = Math.ceil(window.setsFiltrados.length / SETS_POR_PAGINA) || 1;
             document.getElementById('texto-paginacion').innerText = `Página ${window.paginaActualSets} de ${maxPaginas}`;
         };
 
+        // ==============================================
+        // CARTAS, DRAWER Y AFILIADOS
+        // ==============================================
         window.abrirSet = async (id, nombre) => {
             window.cambiarPantalla('pantalla-detalle-set');
             document.getElementById('titulo-set-actual').innerText = nombre;
-            
-            window.modoSeleccionLote = false;
-            window.cartasSeleccionadas.clear();
-            window.actualizarUIModoLote();
+            window.modoSeleccionLote = false; window.cartasSeleccionadas.clear(); window.actualizarUIModoLote();
             document.getElementById('select-orden').value = "numero";
 
             const galeria = document.getElementById('galeria-cartas');
@@ -380,14 +499,11 @@
                 const laTengo = window.miVaultIds.includes(c.id);
                 const claseBase = laTengo ? "" : "no-obtenida";
                 const claseSel = window.cartasSeleccionadas.has(c.id) ? "seleccionada" : "";
-                
                 galeria.innerHTML += `
                     <div id="wrap-${c.id}" class="carta-wrapper ${claseBase} ${claseSel}" onclick="interactuarConCarta('${c.id}')">
                         <div class="marca-seleccion">✓</div>
                         <img src="${c.images.small}">
-                        <div style="font-size: 12px; margin-top:5px; text-align:center; color: var(--text-muted);">
-                            ${c.cardmarket?.prices?.averageSellPrice ? c.cardmarket.prices.averageSellPrice.toFixed(2) + ' €' : '-'}
-                        </div>
+                        <div style="font-size: 12px; margin-top:5px; text-align:center; color: var(--text-muted);">${c.cardmarket?.prices?.averageSellPrice ? c.cardmarket.prices.averageSellPrice.toFixed(2) + ' €' : '-'}</div>
                     </div>`;
             });
         };
@@ -406,53 +522,30 @@
         window.interactuarConCarta = (idCarta) => {
             if (window.modoSeleccionLote) {
                 const wrapper = document.getElementById(`wrap-${idCarta}`);
-                if (window.cartasSeleccionadas.has(idCarta)) {
-                    window.cartasSeleccionadas.delete(idCarta); wrapper.classList.remove('seleccionada');
-                } else {
-                    window.cartasSeleccionadas.add(idCarta); wrapper.classList.add('seleccionada');
-                }
+                if (window.cartasSeleccionadas.has(idCarta)) { window.cartasSeleccionadas.delete(idCarta); wrapper.classList.remove('seleccionada'); } 
+                else { window.cartasSeleccionadas.add(idCarta); wrapper.classList.add('seleccionada'); }
                 document.getElementById('contador-lote').innerText = `${window.cartasSeleccionadas.size} sel.`;
-            } else {
-                window.abrirDrawer(idCarta);
-            }
+            } else { window.abrirDrawer(idCarta); }
         };
 
-        window.toggleModoLote = () => {
-            window.modoSeleccionLote = !window.modoSeleccionLote;
-            window.cartasSeleccionadas.clear();
-            window.pintarGaleriaSet();
-            window.actualizarUIModoLote();
-        };
-
+        window.toggleModoLote = () => { window.modoSeleccionLote = !window.modoSeleccionLote; window.cartasSeleccionadas.clear(); window.pintarGaleriaSet(); window.actualizarUIModoLote(); };
         window.actualizarUIModoLote = () => {
-            const btn = document.getElementById('btn-toggle-lote');
-            const menu = document.getElementById('acciones-lote');
-            if (window.modoSeleccionLote) {
-                btn.innerText = "Cancelar Selección"; btn.style.background = "var(--border)";
-                menu.style.display = "flex"; document.getElementById('contador-lote').innerText = "0 sel.";
-            } else {
-                btn.innerText = "Selección en Lote"; btn.style.background = "transparent";
-                menu.style.display = "none";
-            }
+            const btn = document.getElementById('btn-toggle-lote'); const menu = document.getElementById('acciones-lote');
+            if (window.modoSeleccionLote) { btn.innerText = "Cancelar"; btn.style.background = "var(--border)"; menu.style.display = "flex"; document.getElementById('contador-lote').innerText = "0 sel."; } 
+            else { btn.innerText = "Selección en Lote"; btn.style.background = "transparent"; menu.style.display = "none"; }
         };
 
         window.guardarLoteNube = async (accion) => {
-            if (!usuarioActual) return alert("Inicia sesión con Google para modificar tu bóveda.");
+            if (!usuarioActual) return alert("Inicia sesión para modificar.");
             if (window.cartasSeleccionadas.size === 0) return;
-            
             const btn = document.getElementById(accion === 'add' ? 'btn-lote-add' : 'btn-lote-remove');
-            const originalText = btn.innerText;
-            btn.innerText = "Sincronizando...";
-
+            const originalText = btn.innerText; btn.innerText = "...";
             const arraySeleccion = Array.from(window.cartasSeleccionadas);
-            if (accion === 'add') {
-                window.miVaultIds = [...new Set([...window.miVaultIds, ...arraySeleccion])];
-            } else if (accion === 'remove') {
-                window.miVaultIds = window.miVaultIds.filter(id => !arraySeleccion.includes(id));
-            }
-            await guardarEnNube();
-            btn.innerText = originalText;
-            window.toggleModoLote();
+            
+            if (accion === 'add') window.miVaultIds = [...new Set([...window.miVaultIds, ...arraySeleccion])];
+            else if (accion === 'remove') window.miVaultIds = window.miVaultIds.filter(id => !arraySeleccion.includes(id));
+            
+            await guardarEnNube(); btn.innerText = originalText; window.toggleModoLote();
         };
 
         window.abrirDrawer = async (idCarta) => {
@@ -461,6 +554,16 @@
             document.getElementById('drawer-img').src = cartaActiva.images.large; document.getElementById('drawer-nombre').innerText = cartaActiva.name; document.getElementById('drawer-set').innerText = cartaActiva.set.name;
             const p = cartaActiva.cardmarket?.prices?.averageSellPrice; document.getElementById('drawer-precio').innerText = p ? p.toFixed(2) + " €" : "N/D";
             document.getElementById('drawer-rareza').innerText = cartaActiva.rarity || 'Normal';
+            
+            // LOGICA AFILIADOS
+            const urlCardmarket = cartaActiva.cardmarket?.url || 'https://www.cardmarket.com/';
+            // Genera una búsqueda en eBay con el nombre de la carta y el set + tu ID ficticio de afiliado
+            const queryEbay = encodeURIComponent(`${cartaActiva.name} ${cartaActiva.set.name}`);
+            const urlEbay = `https://www.ebay.es/sch/i.html?_nkw=${queryEbay}&campid=5338123456`; // campid = ID Afiliado
+            
+            document.getElementById('btn-comprar-cm').href = urlCardmarket;
+            document.getElementById('btn-comprar-ebay').href = urlEbay;
+
             window.actualizarBotonDrawer();
         };
 
@@ -476,25 +579,21 @@
             if (!usuarioActual) return alert("Inicia Sesión con Google primero.");
             const id = cartaActiva.id; const btn = document.getElementById('btn-vault'); btn.innerText = "Sincronizando...";
             if (window.miVaultIds.includes(id)) window.miVaultIds = window.miVaultIds.filter(x => x !== id); else window.miVaultIds.push(id);
-            await guardarEnNube();
-            window.actualizarBotonDrawer();
+            await guardarEnNube(); window.actualizarBotonDrawer();
             const wrapper = document.getElementById(`wrap-${id}`);
             if(wrapper) wrapper.className = window.miVaultIds.includes(id) ? "carta-wrapper" : "carta-wrapper no-obtenida";
         };
 
-        window.cargarBovedaUI = async () => {
+        // Pintar pestaña Boveda (se alimenta de la caché que ya bajó inicio)
+        window.cargarBovedaGrid = () => {
             const grid = document.getElementById('grid-boveda');
             if (!usuarioActual) { grid.innerHTML = "<p>Inicia sesión con Google para ver tu bóveda.</p>"; return; }
-            if (window.miVaultIds.length === 0) { grid.innerHTML = "<p>Tu bóveda está vacía.</p>"; document.getElementById('valor-total-boveda').innerText = "0.00 €"; document.getElementById('contador-cartas').innerText = "0"; return; }
-            grid.innerHTML = "<p>Descargando tasación...</p>";
-            try {
-                const query = window.miVaultIds.map(id => `id:${id}`).join(' OR ');
-                const res = await fetch(`https://api.pokemontcg.io/v2/cards?q=${query}`);
-                const json = await res.json();
-                let suma = 0; grid.innerHTML = "";
-                json.data.forEach(c => { window.cacheCartas[c.id] = c; suma += c.cardmarket?.prices?.averageSellPrice || 0; grid.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`; });
-                document.getElementById('valor-total-boveda').innerText = suma.toFixed(2) + " €"; document.getElementById('contador-cartas').innerText = json.data.length;
-            } catch (e) { grid.innerHTML = "Error de red."; }
+            if (window.miVaultIds.length === 0) { grid.innerHTML = "<p>Tu bóveda está vacía.</p>"; return; }
+            grid.innerHTML = "";
+            window.miVaultIds.forEach(id => {
+                const c = window.cacheCartas[id];
+                if(c) grid.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`;
+            });
         };
 
         window.buscarMercado = async () => {
@@ -504,5 +603,7 @@
             r.innerHTML = ""; json.data.forEach(c => { window.cacheCartas[c.id] = c; r.innerHTML += `<div class="carta-wrapper"><img src="${c.images.small}" onclick="abrirDrawer('${c.id}')"></div>`; });
         };
     </script>
+</body>
+</html>
 </body>
 </html>
